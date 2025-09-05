@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -34,6 +40,7 @@ import { Link } from "react-router-dom";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [language, setLanguage] = useState("en");
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock state
@@ -68,18 +75,6 @@ export const Navigation = () => {
             </span>
           </Link>
 
-          {/* Desktop Search */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                type="search"
-                placeholder={language === "en" ? "Search songs, artists..." : "Buscar músicas, artistas..."}
-                className="pl-10 bg-muted/50 border-muted-foreground/20 focus:border-primary transition-colors ease-musical"
-              />
-            </div>
-          </div>
-
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-6">
             {navigationItems.map((item) => {
@@ -99,6 +94,15 @@ export const Navigation = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-2">
+            {/* Search Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsSearchOpen(true)}
+              className="hover:bg-accent transition-colors ease-musical"
+            >
+              <Search className="w-4 h-4" />
+            </Button>
             {/* Theme Toggle */}
             <Button
               variant="ghost"
@@ -177,18 +181,6 @@ export const Navigation = () => {
         {isMenuOpen && (
           <div className="lg:hidden border-t bg-card/95 backdrop-blur-sm">
             <div className="py-4 space-y-4">
-              {/* Mobile Search */}
-              <div className="px-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    type="search"
-                    placeholder={language === "en" ? "Search songs, artists..." : "Buscar músicas, artistas..."}
-                    className="pl-10 bg-muted/50"
-                  />
-                </div>
-              </div>
-
               {/* Mobile Navigation */}
               <div className="px-4 space-y-2">
                 {navigationItems.map((item) => {
@@ -210,6 +202,26 @@ export const Navigation = () => {
           </div>
         )}
       </div>
+
+      {/* Search Modal */}
+      <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {language === "en" ? "Search" : "Buscar"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              type="search"
+              placeholder={language === "en" ? "Search songs, artists..." : "Buscar músicas, artistas..."}
+              className="pl-10"
+              autoFocus
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };
