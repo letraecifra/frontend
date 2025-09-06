@@ -37,15 +37,16 @@ import {
   X
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [language, setLanguage] = useState("en");
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock state
+  const { language, setLanguage, t } = useLanguage();
 
-  // Initialize theme and language from localStorage and browser on component mount
+  // Initialize theme from localStorage on component mount
   useEffect(() => {
     // Theme initialization
     const savedTheme = localStorage.getItem('theme');
@@ -56,18 +57,6 @@ export const Navigation = () => {
       // Default to light mode
       setIsDark(false);
       document.documentElement.classList.remove('dark');
-    }
-
-    // Language initialization
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'pt')) {
-      setLanguage(savedLanguage);
-    } else {
-      // Detect browser language
-      const browserLanguage = navigator.language || navigator.languages[0];
-      const detectedLanguage = browserLanguage.toLowerCase().startsWith('pt') ? 'pt' : 'en';
-      setLanguage(detectedLanguage);
-      localStorage.setItem('language', detectedLanguage);
     }
   }, []);
 
@@ -84,17 +73,11 @@ export const Navigation = () => {
     }
   };
 
-  const toggleLanguage = () => {
-    const newLanguage = language === "en" ? "pt" : "en";
-    setLanguage(newLanguage);
-    localStorage.setItem('language', newLanguage);
-  };
-
   const navigationItems = [
-    { href: "/", label: language === "en" ? "Home" : "Início", icon: Music },
-    { href: "/latest", label: language === "en" ? "Latest" : "Recentes", icon: Clock },
-    { href: "/popular", label: language === "en" ? "Popular" : "Populares", icon: TrendingUp },
-    { href: "/bookmarks", label: language === "en" ? "Bookmarks" : "Favoritos", icon: Bookmark },
+    { href: "/", label: t("nav.home"), icon: Music },
+    { href: "/latest", label: t("nav.latest"), icon: Clock },
+    { href: "/popular", label: t("nav.popular"), icon: TrendingUp },
+    { href: "/bookmarks", label: t("nav.bookmarks"), icon: Bookmark },
   ];
 
   return (
@@ -160,16 +143,10 @@ export const Navigation = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => {
-                  setLanguage("en");
-                  localStorage.setItem('language', 'en');
-                }}>
+                <DropdownMenuItem onClick={() => setLanguage("en")}>
                   English
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {
-                  setLanguage("pt");
-                  localStorage.setItem('language', 'pt');
-                }}>
+                <DropdownMenuItem onClick={() => setLanguage("pt")}>
                   Português
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -185,13 +162,13 @@ export const Navigation = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem>
-                    <Link to="/profile">{language === "en" ? "Profile" : "Perfil"}</Link>
+                    <Link to="/profile">{t("nav.profile")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Link to="/my-songs">{language === "en" ? "My Songs" : "Minhas Músicas"}</Link>
+                    <Link to="/my-songs">{t("nav.mySongs")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
-                    {language === "en" ? "Logout" : "Sair"}
+                    {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -203,7 +180,7 @@ export const Navigation = () => {
                 onClick={() => setIsLoggedIn(true)}
               >
                 <LogIn className="w-4 h-4 mr-2" />
-                {language === "en" ? "Login" : "Entrar"}
+                {t("nav.login")}
               </Button>
             )}
 
@@ -250,14 +227,14 @@ export const Navigation = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {language === "en" ? "Search" : "Buscar"}
+              {t("nav.search")}
             </DialogTitle>
           </DialogHeader>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               type="search"
-              placeholder={language === "en" ? "Search songs, artists..." : "Buscar músicas, artistas..."}
+              placeholder={t("nav.searchPlaceholder")}
               className="pl-10"
               autoFocus
             />

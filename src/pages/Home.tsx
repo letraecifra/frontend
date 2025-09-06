@@ -16,6 +16,7 @@ import {
   PlayCircle,
   Filter
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Mock data for the prototype
 const mockSongs = [
@@ -106,7 +107,7 @@ const mockStats = {
 };
 
 export const Home = () => {
-  const [language] = useState("en");
+  const { language, t } = useLanguage();
   const [activeTab, setActiveTab] = useState("latest");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -139,17 +140,14 @@ export const Home = () => {
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-6">
               <span className="block">
-                {language === "en" ? "Share Your" : "Compartilhe Sua"}
+                {t("home.heroTitle1")}
               </span>
               <span className="block bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
-                {language === "en" ? "Musical Story" : "História Musical"}
+                {t("home.heroTitle2")}
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-primary-foreground/90 mb-8 leading-relaxed">
-              {language === "en" 
-                ? "The ultimate platform for sharing lyrics, chords, tablatures, and sheet music with musicians worldwide."
-                : "A plataforma definitiva para compartilhar letras, cifras, tablaturas e partituras com músicos do mundo todo."
-              }
+              {t("home.heroSubtitle")}
             </p>
             
             {/* Hero Search */}
@@ -158,7 +156,7 @@ export const Home = () => {
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-foreground/60 w-5 h-5" />
                 <Input
                   type="search"
-                  placeholder={language === "en" ? "Search for songs, artists, or chords..." : "Buscar músicas, artistas ou acordes..."}
+                  placeholder={t("home.searchPlaceholder")}
                   className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-sm border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -166,13 +164,13 @@ export const Home = () => {
               </div>
               <div className="flex justify-center mt-4 space-x-2">
                 <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
-                  {language === "en" ? "45K+ Songs" : "45K+ Músicas"}
+                  45K+ {t("home.songsCount")}
                 </Badge>
                 <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
-                  {language === "en" ? "12K+ Artists" : "12K+ Artistas"}
+                  12K+ {t("home.artistsCount")}
                 </Badge>
                 <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
-                  {language === "en" ? "89K+ Users" : "89K+ Usuários"}
+                  89K+ {t("home.musiciansCount")}
                 </Badge>
               </div>
             </div>
@@ -189,28 +187,28 @@ export const Home = () => {
                 <Music className="w-6 h-6 text-primary-foreground" />
               </div>
               <div className="text-2xl font-bold text-foreground">{mockStats.totalSongs.toLocaleString()}</div>
-              <div className="text-muted-foreground">{language === "en" ? "Songs" : "Músicas"}</div>
+              <div className="text-muted-foreground">{t("home.songsCount")}</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto mb-3 shadow-musical">
                 <Users className="w-6 h-6 text-primary-foreground" />
               </div>
               <div className="text-2xl font-bold text-foreground">{mockStats.totalArtists.toLocaleString()}</div>
-              <div className="text-muted-foreground">{language === "en" ? "Artists" : "Artistas"}</div>
+              <div className="text-muted-foreground">{t("home.artistsCount")}</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto mb-3 shadow-musical">
                 <PlayCircle className="w-6 h-6 text-primary-foreground" />
               </div>
               <div className="text-2xl font-bold text-foreground">{mockStats.totalUsers.toLocaleString()}</div>
-              <div className="text-muted-foreground">{language === "en" ? "Musicians" : "Músicos"}</div>
+              <div className="text-muted-foreground">{t("home.musiciansCount")}</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto mb-3 shadow-musical">
                 <Star className="w-6 h-6 text-primary-foreground" />
               </div>
               <div className="text-2xl font-bold text-foreground">{mockStats.songsThisWeek.toLocaleString()}</div>
-              <div className="text-muted-foreground">{language === "en" ? "This Week" : "Esta Semana"}</div>
+              <div className="text-muted-foreground">{t("home.thisWeekCount")}</div>
             </div>
           </div>
         </div>
@@ -223,40 +221,37 @@ export const Home = () => {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-3xl font-bold text-foreground mb-2">
-                  {language === "en" ? "Discover Music" : "Descobrir Música"}
+                  {t("home.discoverMusic")}
                 </h2>
                 <p className="text-muted-foreground">
-                  {language === "en" 
-                    ? "Explore the latest additions and community favorites"
-                    : "Explore as últimas adições e favoritos da comunidade"
-                  }
+                  {t("home.discoverSubtitle")}
                 </p>
               </div>
               <Button variant="outline" size="sm" className="hidden md:flex">
                 <Filter className="w-4 h-4 mr-2" />
-                {language === "en" ? "Filter" : "Filtrar"}
+                {t("home.filter")}
               </Button>
             </div>
 
             <TabsList className="grid w-full grid-cols-3 max-w-md mb-8 bg-muted/50">
               <TabsTrigger value="latest" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground">
                 <Clock className="w-4 h-4 mr-2" />
-                {language === "en" ? "Latest" : "Recentes"}
+                {t("home.latest")}
               </TabsTrigger>
               <TabsTrigger value="popular" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground">
                 <Star className="w-4 h-4 mr-2" />
-                {language === "en" ? "Popular" : "Popular"}
+                {t("home.popular")}
               </TabsTrigger>
               <TabsTrigger value="trending" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground">
                 <TrendingUp className="w-4 h-4 mr-2" />
-                {language === "en" ? "Trending" : "Tendência"}
+                {t("home.trending")}
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="latest" className="space-y-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {getTabContent("latest").map((song) => (
-                  <SongCard key={song.id} {...song} language={language} />
+                  <SongCard key={song.id} {...song} />
                 ))}
               </div>
             </TabsContent>
@@ -264,7 +259,7 @@ export const Home = () => {
             <TabsContent value="popular" className="space-y-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {getTabContent("popular").map((song) => (
-                  <SongCard key={song.id} {...song} language={language} />
+                  <SongCard key={song.id} {...song} />
                 ))}
               </div>
             </TabsContent>
@@ -272,7 +267,7 @@ export const Home = () => {
             <TabsContent value="trending" className="space-y-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {getTabContent("trending").map((song) => (
-                  <SongCard key={song.id} {...song} language={language} />
+                  <SongCard key={song.id} {...song} />
                 ))}
               </div>
             </TabsContent>
@@ -285,7 +280,7 @@ export const Home = () => {
               size="lg" 
               className="hover:bg-primary hover:text-primary-foreground transition-all ease-musical"
             >
-              {language === "en" ? "Load More Songs" : "Carregar Mais Músicas"}
+              {t("home.loadMore")}
             </Button>
           </div>
         </div>

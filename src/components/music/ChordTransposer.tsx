@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Music, ArrowUp, ArrowDown, RotateCcw } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Musical notes in chromatic order
 const NOTES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
@@ -19,15 +20,14 @@ interface ChordTransposerProps {
   originalKey: string;
   content: string;
   onContentChange: (newContent: string, newKey: string) => void;
-  language?: string;
 }
 
 export const ChordTransposer = ({ 
   originalKey, 
   content, 
-  onContentChange, 
-  language = "en" 
+  onContentChange
 }: ChordTransposerProps) => {
+  const { t } = useLanguage();
   const [currentKey, setCurrentKey] = useState(originalKey);
 
   const transposeChord = useCallback((chord: string, semitones: number): string => {
@@ -94,7 +94,7 @@ export const ChordTransposer = ({
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center space-x-2 text-lg">
           <Music className="w-5 h-5 text-primary" />
-          <span>{language === "en" ? "Key Transposer" : "Transpositor de Tom"}</span>
+          <span>{t("transpose.title")}</span>
         </CardTitle>
       </CardHeader>
       
@@ -103,7 +103,7 @@ export const ChordTransposer = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="text-sm font-medium text-muted-foreground">
-              {language === "en" ? "Current Key:" : "Tom Atual:"}
+              {t("transpose.currentKey")}
             </span>
             <Badge variant="outline" className="text-lg font-bold px-3 py-1 border-primary text-primary">
               {currentKey}
@@ -114,7 +114,7 @@ export const ChordTransposer = ({
             <div className="flex items-center space-x-2">
               <Badge variant="secondary" className="text-xs">
                 {semitoneDistance > 0 ? `+${semitoneDistance}` : semitoneDistance} 
-                {language === "en" ? " semitones" : " semitons"}
+                {t("transpose.semitones")}
               </Badge>
               <Button
                 variant="ghost"
@@ -123,7 +123,7 @@ export const ChordTransposer = ({
                 className="text-xs hover:text-primary"
               >
                 <RotateCcw className="w-3 h-3 mr-1" />
-                {language === "en" ? "Reset" : "Resetar"}
+                {t("transpose.reset")}
               </Button>
             </div>
           )}
@@ -143,7 +143,7 @@ export const ChordTransposer = ({
           
           <div className="px-4 py-2 bg-muted/50 rounded-md border-2 border-dashed border-muted-foreground/30">
             <span className="text-sm font-medium">
-              {language === "en" ? "Quick Transpose" : "Transposição Rápida"}
+              {t("transpose.quickTranspose")}
             </span>
           </div>
           
@@ -161,7 +161,7 @@ export const ChordTransposer = ({
         {/* Key Selector */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">
-            {language === "en" ? "Select Target Key:" : "Selecionar Tom Alvo:"}
+            {t("transpose.selectTargetKey")}
           </label>
           <Select value={currentKey} onValueChange={transposeContent}>
             <SelectTrigger className="bg-card border-muted-foreground/20 hover:border-primary transition-colors ease-musical">
@@ -174,7 +174,7 @@ export const ChordTransposer = ({
                     <span className="font-medium">{note}</span>
                     {note === originalKey && (
                       <Badge variant="secondary" className="ml-2 text-xs">
-                        {language === "en" ? "Original" : "Original"}
+                        {t("transpose.original")}
                       </Badge>
                     )}
                   </div>
@@ -187,17 +187,11 @@ export const ChordTransposer = ({
         {/* Info */}
         <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-md">
           <p>
-            {language === "en" 
-              ? "Original key: " 
-              : "Tom original: "
-            }
+            {t("transpose.originalKey")}
             <span className="font-bold text-musical-key">{originalKey}</span>
           </p>
           <p className="mt-1">
-            {language === "en"
-              ? "All chords in the song will automatically transpose to match the selected key."
-              : "Todos os acordes da música serão automaticamente transpostos para o tom selecionado."
-            }
+            {t("transpose.autoTranspose")}
           </p>
         </div>
       </CardContent>

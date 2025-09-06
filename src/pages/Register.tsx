@@ -18,9 +18,10 @@ import {
   EyeOff,
   Chrome
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Register = () => {
-  const [language] = useState("en");
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",

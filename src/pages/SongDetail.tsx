@@ -305,7 +305,6 @@ export const SongDetail = () => {
               originalKey={song.originalKey}
               content={currentContent}
               onContentChange={handleContentChange}
-              language={language}
             />
 
             {/* Song Info */}

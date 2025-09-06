@@ -13,6 +13,7 @@ import {
   Music4
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SongCardProps {
   id: string;
@@ -23,7 +24,6 @@ interface SongCardProps {
   likes: number;
   comments: number;
   key?: string;
-  language: string;
   spotifyUrl?: string;
   youtubeUrl?: string;
   createdBy: string;
@@ -40,11 +40,11 @@ export const SongCard = ({
   likes, 
   comments, 
   key, 
-  language,
   createdBy,
   createdAt,
   isLiked = false 
 }: SongCardProps) => {
+  const { t } = useLanguage();
   const getTypeIcon = () => {
     switch (type) {
       case "lyrics": return <FileText className="w-4 h-4" />;
@@ -57,10 +57,10 @@ export const SongCard = ({
 
   const getTypeLabel = () => {
     switch (type) {
-      case "lyrics": return language === "en" ? "Lyrics" : "Letra";
-      case "chords": return language === "en" ? "Chords" : "Cifra";
-      case "tabs": return language === "en" ? "Tablature" : "Tablatura";
-      case "sheet": return language === "en" ? "Sheet Music" : "Partitura";
+      case "lyrics": return t("song.lyrics");
+      case "chords": return t("song.chords");
+      case "tabs": return t("song.tablature");
+      case "sheet": return t("song.sheetMusic");
       default: return "Music";
     }
   };
@@ -138,14 +138,14 @@ export const SongCard = ({
           >
             <Play className="w-4 h-4 mr-1" />
             <span className="text-xs">
-              {language === "en" ? "View" : "Ver"}
+              {t("common.view")}
             </span>
           </Button>
         </div>
 
         <div className="mt-2 pt-2 border-t border-border/50">
           <div className="text-xs text-muted-foreground">
-            {language === "en" ? "Added by" : "Adicionado por"} <span className="font-medium text-foreground">{createdBy}</span>
+            {t("song.addedBy")} <span className="font-medium text-foreground">{createdBy}</span>
           </div>
         </div>
       </CardContent>
