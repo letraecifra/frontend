@@ -45,8 +45,9 @@ export const Navigation = () => {
   const [language, setLanguage] = useState("en");
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock state
 
-  // Initialize theme from localStorage on component mount
+  // Initialize theme and language from localStorage and browser on component mount
   useEffect(() => {
+    // Theme initialization
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       setIsDark(true);
@@ -55,6 +56,18 @@ export const Navigation = () => {
       // Default to light mode
       setIsDark(false);
       document.documentElement.classList.remove('dark');
+    }
+
+    // Language initialization
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'pt')) {
+      setLanguage(savedLanguage);
+    } else {
+      // Detect browser language
+      const browserLanguage = navigator.language || navigator.languages[0];
+      const detectedLanguage = browserLanguage.toLowerCase().startsWith('pt') ? 'pt' : 'en';
+      setLanguage(detectedLanguage);
+      localStorage.setItem('language', detectedLanguage);
     }
   }, []);
 
@@ -72,7 +85,9 @@ export const Navigation = () => {
   };
 
   const toggleLanguage = () => {
-    setLanguage(language === "en" ? "pt" : "en");
+    const newLanguage = language === "en" ? "pt" : "en";
+    setLanguage(newLanguage);
+    localStorage.setItem('language', newLanguage);
   };
 
   const navigationItems = [
@@ -145,10 +160,16 @@ export const Navigation = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setLanguage("en")}>
+                <DropdownMenuItem onClick={() => {
+                  setLanguage("en");
+                  localStorage.setItem('language', 'en');
+                }}>
                   English
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("pt")}>
+                <DropdownMenuItem onClick={() => {
+                  setLanguage("pt");
+                  localStorage.setItem('language', 'pt');
+                }}>
                   Português
                 </DropdownMenuItem>
               </DropdownMenuContent>
