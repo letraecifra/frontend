@@ -4,7 +4,6 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { Card } from "@/components/ui/card";
 import musician1 from "@/assets/musician-1.jpg";
 import musician2 from "@/assets/musician-2.jpg";
 import musician3 from "@/assets/musician-3.jpg";
@@ -30,16 +29,16 @@ export const HeroCarousel = ({ className = "" }: HeroCarouselProps) => {
   useEffect(() => {
     if (!api) return;
 
-    // Auto-play functionality
+    // Auto-play functionality - 6 seconds per image
     const timer = setInterval(() => {
       if (api.canScrollNext()) {
         api.scrollNext();
       } else {
         api.scrollTo(0);
       }
-    }, 4000);
+    }, 6000);
 
-    // Update current slide
+    // Update current slide for fade effect
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
     });
@@ -50,49 +49,39 @@ export const HeroCarousel = ({ className = "" }: HeroCarouselProps) => {
   }, [api]);
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full h-full ${className}`}>
       <Carousel
         setApi={setApi}
-        className="w-full"
+        className="w-full h-full"
         opts={{
           align: "start",
           loop: true,
+          dragFree: false,
+          containScroll: false,
         }}
       >
-        <CarouselContent>
+        <CarouselContent className="-ml-0">
           {musicianImages.map((image, index) => (
-            <CarouselItem key={index}>
-              <div className="p-1">
-                <Card className="border-0 shadow-elevated overflow-hidden bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-sm">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-                </Card>
+            <CarouselItem key={index} className="pl-0">
+              <div className="relative w-full h-full overflow-hidden">
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full lg:h-screen object-cover transition-opacity duration-1000 pointer-events-none select-none"
+                  style={{
+                    opacity: current === index ? 1 : 0,
+                    position: current === index ? 'relative' : 'absolute',
+                    top: current === index ? 'auto' : 0,
+                    left: current === index ? 'auto' : 0,
+                  }}
+                  draggable={false}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
-      
-      {/* Carousel Indicators */}
-      <div className="flex justify-center mt-4 space-x-2">
-        {musicianImages.map((_, index) => (
-          <button
-            key={index}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              current === index 
-                ? 'bg-white shadow-glow' 
-                : 'bg-white/40 hover:bg-white/60'
-            }`}
-            onClick={() => api?.scrollTo(index)}
-          />
-        ))}
-      </div>
     </div>
   );
 };
