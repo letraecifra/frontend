@@ -1,9 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
 import musician1 from "@/assets/musician-1.jpg";
 import musician2 from "@/assets/musician-2.jpg";
 import musician3 from "@/assets/musician-3.jpg";
@@ -23,72 +18,39 @@ interface HeroCarouselProps {
 }
 
 export const HeroCarousel = ({ className = "" }: HeroCarouselProps) => {
-  const [api, setApi] = useState<any>();
   const [current, setCurrent] = useState(0);
 
-  useEffect(() => {
-    if (!api) return;
-
+  useEffect(() => {    
     // Auto-play functionality - 6 seconds per image
     const timer = setInterval(() => {
-      if (api.canScrollNext()) {
-        api.scrollNext();
-      } else {
-        api.scrollTo(0);
-      }
+      setCurrent((prev) => (prev + 1) % musicianImages.length);
     }, 6000);
-
-    // Update current slide for fade effect
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap());
-    });
 
     return () => {
       clearInterval(timer);
     };
-  }, [api]);
+  }, []);
 
   return (
     <div className={`w-screen lg:w-full h-full ${className}`}>
-      <Carousel
-        setApi={setApi}
-        className="w-full h-full"
-        opts={{
-          align: "start",
-          loop: true,
-          dragFree: false,
-          containScroll: false,
-          watchDrag: false,
-          watchResize: false,
-          watchSlides: false,
-        }}
-      >
-        <CarouselContent className="-ml-0 [&>*]:transition-opacity [&>*]:duration-1000">
-          {musicianImages.map((image, index) => (
-            <CarouselItem 
-              key={index} 
-              className="pl-0 absolute inset-0"
-              style={{
-                opacity: current === index ? 1 : 0,
-                pointerEvents: 'none'
-              }}
-            >
-              <div className="relative w-full h-full overflow-hidden">
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-full object-cover pointer-events-none select-none touch-none"
-                  draggable={false}
-                  onDragStart={(e) => e.preventDefault()}
-                  onTouchStart={(e) => e.preventDefault()}
-                  onMouseDown={(e) => e.preventDefault()}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      <div className="relative w-full h-full overflow-hidden">
+        {musicianImages.map((image, index) => (
+          <img
+            key={index}
+            src={image.src}
+            alt={image.alt}
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 pointer-events-none select-none touch-none"
+            style={{
+              opacity: current === index ? 1 : 0,
+            }}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            onTouchStart={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+      </div>
     </div>
   );
 };
