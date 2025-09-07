@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigation } from "@/components/layout/Navigation";
 import { SongCard } from "@/components/music/SongCard";
+import { HeroCarousel } from "@/components/music/HeroCarousel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -134,44 +135,115 @@ export const Home = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-primary relative overflow-hidden">
+      <section className="bg-gradient-primary relative overflow-hidden min-h-[600px] lg:min-h-[700px]">
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto px-4 py-16 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-6">
-              <span className="block">
-                {t("home.heroTitle1")}
-              </span>
-              <span className="block bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
-                {t("home.heroTitle2")}
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-primary-foreground/90 mb-8 leading-relaxed">
-              {t("home.heroSubtitle")}
-            </p>
+        
+        {/* Mobile Layout - Vertical Stack */}
+        <div className="block lg:hidden">
+          <div className="container mx-auto px-4 pt-8 relative z-10">
+            {/* Carousel for Mobile */}
+            <div className="mb-8">
+              <HeroCarousel className="max-w-sm mx-auto" />
+            </div>
             
-            {/* Hero Search */}
-            <div className="max-w-2xl mx-auto relative">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-foreground/60 w-5 h-5" />
-                <Input
-                  type="search"
-                  placeholder={t("home.searchPlaceholder")}
-                  className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-sm border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+            {/* Mobile Gradient Overlay */}
+            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-transparent via-primary/10 to-transparent pointer-events-none z-20"></div>
+            
+            {/* Content for Mobile */}
+            <div className="text-center max-w-4xl mx-auto pb-16">
+              <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6">
+                <span className="block">
+                  {t("home.heroTitle1")}
+                </span>
+                <span className="block bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
+                  {t("home.heroTitle2")}
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
+                {t("home.heroSubtitle")}
+              </p>
+              
+              {/* Hero Search */}
+              <div className="max-w-2xl mx-auto relative">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-foreground/60 w-5 h-5" />
+                  <Input
+                    type="search"
+                    placeholder={t("home.searchPlaceholder")}
+                    className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-sm border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-center mt-4 space-x-2 flex-wrap gap-y-2">
+                  <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
+                    45K+ {t("home.songsCount")}
+                  </Badge>
+                  <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
+                    12K+ {t("home.artistsCount")}
+                  </Badge>
+                  <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
+                    89K+ {t("home.musiciansCount")}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex justify-center mt-4 space-x-2">
-                <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
-                  45K+ {t("home.songsCount")}
-                </Badge>
-                <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
-                  12K+ {t("home.artistsCount")}
-                </Badge>
-                <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
-                  89K+ {t("home.musiciansCount")}
-                </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Layout - Side by Side */}
+        <div className="hidden lg:block">
+          <div className="container mx-auto px-4 py-16 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
+              {/* Content Section */}
+              <div className="text-left max-w-2xl">
+                <h1 className="text-4xl xl:text-6xl font-bold text-primary-foreground mb-6">
+                  <span className="block">
+                    {t("home.heroTitle1")}
+                  </span>
+                  <span className="block bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
+                    {t("home.heroTitle2")}
+                  </span>
+                </h1>
+                <p className="text-xl xl:text-2xl text-primary-foreground/90 mb-8 leading-relaxed">
+                  {t("home.heroSubtitle")}
+                </p>
+                
+                {/* Hero Search */}
+                <div className="max-w-xl relative">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-foreground/60 w-5 h-5" />
+                    <Input
+                      type="search"
+                      placeholder={t("home.searchPlaceholder")}
+                      className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-sm border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex mt-4 space-x-2 flex-wrap gap-y-2">
+                    <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
+                      45K+ {t("home.songsCount")}
+                    </Badge>
+                    <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
+                      12K+ {t("home.artistsCount")}
+                    </Badge>
+                    <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-white/30">
+                      89K+ {t("home.musiciansCount")}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Carousel Section */}
+              <div className="relative">
+                {/* Gradient Transition Overlay */}
+                <div className="absolute -left-12 inset-y-0 w-24 bg-gradient-to-r from-primary via-primary/80 to-transparent pointer-events-none z-10"></div>
+                
+                <HeroCarousel className="relative z-20" />
+                
+                {/* Right Gradient Fade */}
+                <div className="absolute -right-12 inset-y-0 w-24 bg-gradient-to-l from-primary via-primary/60 to-transparent pointer-events-none z-10"></div>
               </div>
             </div>
           </div>
