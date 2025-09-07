@@ -21,7 +21,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Register = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
