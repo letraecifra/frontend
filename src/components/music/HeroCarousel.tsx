@@ -49,7 +49,7 @@ export const HeroCarousel = ({ className = "" }: HeroCarouselProps) => {
   }, [api]);
 
   return (
-    <div className={`w-full h-full ${className}`}>
+    <div className={`w-screen lg:w-full h-full ${className}`}>
       <Carousel
         setApi={setApi}
         className="w-full h-full"
@@ -58,28 +58,30 @@ export const HeroCarousel = ({ className = "" }: HeroCarouselProps) => {
           loop: true,
           dragFree: false,
           containScroll: false,
+          watchDrag: false,
+          watchResize: false,
+          watchSlides: false,
         }}
       >
         <CarouselContent className="-ml-0">
-          {musicianImages.map((image, index) => (
-            <CarouselItem key={index} className="pl-0">
-              <div className="relative w-full h-full overflow-hidden">
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-full lg:h-screen object-cover transition-opacity duration-1000 pointer-events-none select-none"
-                  style={{
-                    opacity: current === index ? 1 : 0,
-                    position: current === index ? 'relative' : 'absolute',
-                    top: current === index ? 'auto' : 0,
-                    left: current === index ? 'auto' : 0,
-                  }}
-                  draggable={false}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-              </div>
-            </CarouselItem>
-          ))}
+          <div className="relative w-full h-full overflow-hidden">
+            {musicianImages.map((image, index) => (
+              <img
+                key={index}
+                src={image.src}
+                alt={image.alt}
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 pointer-events-none select-none touch-none"
+                style={{
+                  opacity: current === index ? 1 : 0,
+                }}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+                onTouchStart={(e) => e.preventDefault()}
+                onMouseDown={(e) => e.preventDefault()}
+              />
+            ))}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+          </div>
         </CarouselContent>
       </Carousel>
     </div>
