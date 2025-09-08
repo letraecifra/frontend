@@ -1,0 +1,419 @@
+import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Navigation } from "@/components/layout/Navigation";
+import { 
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { ArrowLeft, Save, Upload, FileText, Sheet, X, Check } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+
+const sheetMusicSchema = z.object({
+  songName: z.string().min(1, "Nome da música é obrigatório"),
+  artist: z.string().min(1, "Artista é obrigatório"),
+  compositionYear: z.string().optional(),
+  originalLanguage: z.string().min(1, "Idioma original é obrigatório"),
+  spotifyLink: z.string().url("Link do Spotify inválido").optional().or(z.literal("")),
+  youtubeLink: z.string().url("Link do YouTube inválido").optional().or(z.literal("")),
+  sheetFile: z.any().optional(),
+});
+
+type SheetMusicFormData = z.infer<typeof sheetMusicSchema>;
+
+interface UploadedFile {
+  file: File;
+  name: string;
+  size: string;
+  type: string;
+}
+
+const languages = [
+  { value: "pt", label: "Português" },
+  { value: "en", label: "Inglês" },
+  { value: "es", label: "Espanhol" },
+  { value: "fr", label: "Francês" },
+  { value: "it", label: "Italiano" },
+  { value: "de", label: "Alemão" },
+];
+
+const acceptedFormats = [
+  { ext: ".pdf", desc: "Documento PDF" },
+  { ext: ".xml", desc: "MusicXML" },
+  { ext: ".mxl", desc: "MusicXML Comprimido" },
+  { ext: ".mid", desc: "MIDI" },
+  { ext: ".midi", desc: "MIDI" },
+];
+
+export const SheetMusicForm = () => {
+  const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+
+  const form = useForm<SheetMusicFormData>({
+    resolver: zodResolver(sheetMusicSchema),
+    defaultValues: {
+      songName: "",
+      artist: "",
+      compositionYear: "",
+      originalLanguage: "pt",
+      spotifyLink: "",
+      youtubeLink: "",
+    },
+  });
+
+  const onSubmit = (data: SheetMusicFormData) => {
+    if (!uploadedFile) {
+      toast.error("Por favor, faça upload de um arquivo de partitura");
+      return;
+    }
+
+    const formData = {
+      ...data,
+      sheetFile: uploadedFile,
+    };
+    console.log("Sheet Music Form Data:", formData);
+    toast.success("Partitura salva com sucesso!");
+    navigate("/dashboard");
+  };
+
+  const handleFileSelect = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    const maxSize = 50 * 1024 * 1024; // 50MB for sheet music
+
+    // Check file size
+    if (file.size > maxSize) {
+      toast.error("Arquivo muito grande. Máximo 50MB.");
+      return;
+    }
+
+    // Check file extension
+    const validExtensions = ['.pdf', '.xml', '.mxl', '.mid', '.midi'];
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    
+    if (!validExtensions.includes(fileExtension)) {
+      toast.error("Formato não suportado. Use: .pdf, .xml, .mxl, .mid, .midi");
+      return;
+    }
+
+    const uploadedFileInfo: UploadedFile = {
+      file,
+      name: file.name,
+      size: (file.size / 1024 / 1024).toFixed(2) + " MB",
+      type: fileExtension.toUpperCase(),
+    };
+
+    setUploadedFile(uploadedFileInfo);
+    toast.success("Arquivo carregado com sucesso!");
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    handleFileSelect(e.dataTransfer.files);
+  };
+
+  const removeFile = () => {
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 50 }, (_, i) => (currentYear - i).toString());
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/create">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar
+              </Link>
+            </Button>
+          </div>
+          <div className="flex items-center space-x-3 mb-2">
+            <div className="p-2 rounded-lg bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+              <Sheet className="w-5 h-5" />
+            </div>
+            <h1 className="text-3xl font-bold text-foreground">Nova Partitura</h1>
+          </div>
+          <p className="text-muted-foreground">
+            Faça upload de arquivos de partitura (PDF, MusicXML, MIDI)
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Form */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Informações da Música</CardTitle>
+              <CardDescription>Dados básicos da partitura</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="songName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome da Música *</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Ex: Bohemian Rhapsody" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="artist"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Artista *</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Ex: Queen" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="compositionYear"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Ano de Composição</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione o ano" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {years.map((year) => (
+                                <SelectItem key={year} value={year}>
+                                  {year}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="originalLanguage"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Idioma Original *</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {languages.map((lang) => (
+                                <SelectItem key={lang.value} value={lang.value}>
+                                  {lang.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="spotifyLink"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Link do Spotify</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://open.spotify.com/..." />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="youtubeLink"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Link do YouTube</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://youtube.com/..." />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex space-x-4">
+                    <Button type="submit" className="flex items-center space-x-2">
+                      <Save className="w-4 h-4" />
+                      <span>Salvar Partitura</span>
+                    </Button>
+                    <Button type="button" variant="outline">
+                      Salvar como Rascunho
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+
+          {/* File Upload */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Upload de Arquivo</CardTitle>
+                <CardDescription>Partituras em PDF ou formatos musicais</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Drag and Drop Area */}
+                <div
+                  className={`
+                    border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
+                    ${dragActive 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+                    }
+                  `}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-medium mb-2">
+                    Clique ou arraste sua partitura aqui
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Máximo 50MB por arquivo
+                  </p>
+                  <Button variant="outline" size="sm">
+                    Escolher Arquivo
+                  </Button>
+                </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.xml,.mxl,.mid,.midi"
+                  onChange={(e) => handleFileSelect(e.target.files)}
+                  className="hidden"
+                />
+
+                {/* Uploaded File Info */}
+                {uploadedFile && (
+                  <div className="border rounded-lg p-4 bg-muted/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 rounded-lg bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                          <Check className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{uploadedFile.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {uploadedFile.type} • {uploadedFile.size}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeFile}
+                        className="hover:bg-destructive hover:text-destructive-foreground"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Supported Formats */}
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-medium mb-3">Formatos Suportados</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {acceptedFormats.map((format) => (
+                      <div key={format.ext} className="flex items-center space-x-2 text-sm">
+                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-mono">{format.ext}</span>
+                        <span className="text-muted-foreground">({format.desc})</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tips */}
+                <div className="border rounded-lg p-4 bg-orange-50 dark:bg-orange-950/20">
+                  <h4 className="font-medium mb-2 text-orange-800 dark:text-orange-200">🎼 Dicas</h4>
+                  <ul className="text-sm space-y-1 text-orange-700 dark:text-orange-300">
+                    <li>• PDFs em alta resolução garantem melhor leitura</li>
+                    <li>• MusicXML permite edição posterior</li>
+                    <li>• Arquivos .mxl são mais compactos que .xml</li>
+                    <li>• MIDI oferece playback, mas sem notação visual</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
