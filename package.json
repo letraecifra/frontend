@@ -1,17 +1,18 @@
 {
   "name": "@letraecifra/frontend",
   "version": "0.0.0",
+  "private": true,
   "license": "UNLICENSED",
   "author": "Julio Muller",
   "homepage": "https://letraecifra.vercel.app",
-  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "development": "vite",
+    "dev": "bun run development",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint ."
   },
   "packageManager": "bun@1.3.5",
   "dependencies": {
