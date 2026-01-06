@@ -1,5 +1,9 @@
 {
   "name": "@letraecifra/frontend",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "author": "Julio Muller",
+  "homepage": "https://letraecifra.vercel.app",
   "private": true,
   "type": "module",
   "scripts": {
