@@ -70,7 +70,7 @@ export function Calendar({
       }}
       components={{
         Chevron({ orientation }) {
-          return orientation === 'left' ? (
+          return orientation === 'left' || orientation === 'up' ? (
             <ChevronLeft className="h-4 w-4" />
           ) : (
             <ChevronRight className="h-4 w-4" />
