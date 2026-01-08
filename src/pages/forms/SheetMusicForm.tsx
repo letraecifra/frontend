@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Check, FileText, Save, Sheet, Upload, X } from 'lucide-react';
-import { type DragEvent, type ReactNode, useRef, useState } from 'react';
+import { type DragEvent, type KeyboardEvent, type ReactNode, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -146,6 +146,13 @@ export function SheetMusicForm(): ReactNode {
     event.stopPropagation();
     setDragActive(false);
     handleFileSelect(event.dataTransfer.files);
+  }
+
+  function handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      fileInputRef.current?.click();
+    }
   }
 
   function removeFile(): void {
@@ -352,11 +359,14 @@ export function SheetMusicForm(): ReactNode {
                         : 'border-muted-foreground/25 hover:border-muted-foreground/50'
                     }
                   `}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => fileInputRef.current?.click()}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
                   onDragOver={handleDrag}
                   onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
+                  onKeyDown={handleKeyDown}
                 >
                   <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
 
