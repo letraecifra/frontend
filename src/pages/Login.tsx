@@ -3,14 +3,14 @@ import { type FormEvent, type ReactNode, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { Navigation } from '@/components/layout/Navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Checkbox } from '~/components/ui/checkbox';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Separator } from '~/components/ui/separator';
+import { useLanguage } from '~/contexts';
+import { Navigation } from '~/layouts';
 
 export function Login(): ReactNode {
   const { t } = useLanguage();

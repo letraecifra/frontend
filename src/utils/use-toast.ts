@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { type ToastActionElement, type ToastProps } from '@/components/ui/toast';
+import { type ToastActionElement, type ToastProps } from '~/components/ui/toast';
 
 export type ToastId = string;
 

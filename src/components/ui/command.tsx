@@ -9,8 +9,8 @@ import {
   type ReactNode,
 } from 'react';
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
+import { Dialog, DialogContent } from '~/components/ui/dialog';
+import { cn } from '~/utils';
 
 export type CommandDialogProps = DialogProps;
 

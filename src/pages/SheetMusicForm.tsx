@@ -1,14 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Check, FileText, Guitar, Save, Upload, X } from 'lucide-react';
+import { ArrowLeft, Check, FileText, Save, Sheet, Upload, X } from 'lucide-react';
 import { type DragEvent, type KeyboardEvent, type ReactNode, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { Navigation } from '@/components/layout/Navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Form,
   FormControl,
@@ -16,27 +15,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-
-const tabsSchema = z.object({
-  songName: z.string().min(1, 'Nome da música é obrigatório'),
-  artist: z.string().min(1, 'Artista é obrigatório'),
-  compositionYear: z.string().optional(),
-  originalLanguage: z.string().min(1, 'Idioma original é obrigatório'),
-  spotifyLink: z.string().url('Link do Spotify inválido').optional().or(z.literal('')),
-  youtubeLink: z.string().url('Link do YouTube inválido').optional().or(z.literal('')),
-  tabFile: z.any().optional(),
-});
-
-type TabsFormData = z.infer<typeof tabsSchema>;
+} from '~/components/ui/select';
+import { Navigation } from '~/layouts';
 
 interface UploadedFile {
   file: File;
@@ -44,6 +32,22 @@ interface UploadedFile {
   size: string;
   type: string;
 }
+
+type SheetMusicFormData = z.infer<typeof sheetMusicSchema>;
+
+const sheetMusicSchema = z.object({
+  songName: z.string().min(1, 'Nome da música é obrigatório'),
+  artist: z.string().min(1, 'Artista é obrigatório'),
+  compositionYear: z.string().optional(),
+  originalLanguage: z.string().min(1, 'Idioma original é obrigatório'),
+  spotifyLink: z.string().url('Link do Spotify inválido').optional().or(z.literal('')),
+  youtubeLink: z.string().url('Link do YouTube inválido').optional().or(z.literal('')),
+  sheetFile: z.any().optional(),
+});
+
+const CURRENT_YEAR = new Date().getFullYear();
+
+const years = Array.from({ length: 50 }, (_, i) => (CURRENT_YEAR - i).toString());
 
 const languages = [
   { value: 'pt', label: 'Português' },
@@ -55,23 +59,21 @@ const languages = [
 ];
 
 const acceptedFormats = [
-  { ext: '.gp5', desc: 'Guitar Pro 5' },
-  { ext: '.gpx', desc: 'Guitar Pro 6+' },
-  { ext: '.tef', desc: 'TablEdit' },
-  { ext: '.ptb', desc: 'PowerTab' },
+  { ext: '.pdf', desc: 'Documento PDF' },
+  { ext: '.xml', desc: 'MusicXML' },
+  { ext: '.mxl', desc: 'MusicXML Comprimido' },
+  { ext: '.mid', desc: 'MIDI' },
+  { ext: '.midi', desc: 'MIDI' },
 ];
 
-const CURRENT_YEAR = new Date().getFullYear();
-const years = Array.from({ length: 50 }, (_, i) => (CURRENT_YEAR - i).toString());
-
-export function TabsForm(): ReactNode {
+export function SheetMusicForm(): ReactNode {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFile, setUploadedFile] = useState<null | UploadedFile>(null);
   const [dragActive, setDragActive] = useState(false);
 
-  const form = useForm<TabsFormData>({
-    resolver: zodResolver(tabsSchema),
+  const form = useForm<SheetMusicFormData>({
+    resolver: zodResolver(sheetMusicSchema),
     defaultValues: {
       songName: '',
       artist: '',
@@ -82,20 +84,20 @@ export function TabsForm(): ReactNode {
     },
   });
 
-  function handleSubmit(data: TabsFormData): void {
+  function handleSubmit(data: SheetMusicFormData): void {
     if (!uploadedFile) {
-      toast.error('Por favor, faça upload de um arquivo de tablatura');
+      toast.error('Por favor, faça upload de um arquivo de partitura');
       return;
     }
 
     const formData = {
       ...data,
-      tabFile: uploadedFile,
+      sheetFile: uploadedFile,
     };
 
     // eslint-disable-next-line no-console -- DEBUG:
-    console.log('Tabs Form Data:', formData);
-    toast.success('Tablatura salva com sucesso!');
+    console.log('Sheet Music Form Data:', formData);
+    toast.success('Partitura salva com sucesso!');
     navigate('/dashboard');
   }
 
@@ -103,18 +105,18 @@ export function TabsForm(): ReactNode {
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 50 * 1024 * 1024; // 50MB for sheet music
 
     if (file.size > maxSize) {
-      toast.error('Arquivo muito grande. Máximo 10MB.');
+      toast.error('Arquivo muito grande. Máximo 50MB.');
       return;
     }
 
-    const validExtensions = ['.gp5', '.gpx', '.tef', '.ptb'];
+    const validExtensions = ['.pdf', '.xml', '.mxl', '.mid', '.midi'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
 
     if (!validExtensions.includes(fileExtension)) {
-      toast.error('Formato não suportado. Use: .gp5, .gpx, .tef, .ptb');
+      toast.error('Formato não suportado. Use: .pdf, .xml, .mxl, .mid, .midi');
       return;
     }
 
@@ -155,6 +157,7 @@ export function TabsForm(): ReactNode {
 
   function removeFile(): void {
     setUploadedFile(null);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -176,21 +179,23 @@ export function TabsForm(): ReactNode {
           </div>
 
           <div className="flex items-center space-x-3 mb-2">
-            <div className="p-2 rounded-lg bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-              <Guitar className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+              <Sheet className="w-5 h-5" />
             </div>
 
-            <h1 className="text-3xl font-bold text-foreground">Nova Tablatura</h1>
+            <h1 className="text-3xl font-bold text-foreground">Nova Partitura</h1>
           </div>
 
-          <p className="text-muted-foreground">Faça upload de arquivos de tablatura compatíveis</p>
+          <p className="text-muted-foreground">
+            Faça upload de arquivos de partitura (PDF, MusicXML, MIDI)
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
               <CardTitle>Informações da Música</CardTitle>
-              <CardDescription>Dados básicos da tablatura</CardDescription>
+              <CardDescription>Dados básicos da partitura</CardDescription>
             </CardHeader>
 
             <CardContent>
@@ -205,7 +210,7 @@ export function TabsForm(): ReactNode {
                           <FormLabel>Nome da Música *</FormLabel>
 
                           <FormControl>
-                            <Input {...field} placeholder="Ex: Stairway to Heaven" />
+                            <Input {...field} placeholder="Ex: Bohemian Rhapsody" />
                           </FormControl>
 
                           <FormMessage />
@@ -221,7 +226,7 @@ export function TabsForm(): ReactNode {
                           <FormLabel>Artista *</FormLabel>
 
                           <FormControl>
-                            <Input {...field} placeholder="Ex: Led Zeppelin" />
+                            <Input {...field} placeholder="Ex: Queen" />
                           </FormControl>
 
                           <FormMessage />
@@ -281,6 +286,7 @@ export function TabsForm(): ReactNode {
                               ))}
                             </SelectContent>
                           </Select>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -324,7 +330,7 @@ export function TabsForm(): ReactNode {
                   <div className="flex space-x-4">
                     <Button type="submit" className="flex items-center space-x-2">
                       <Save className="w-4 h-4" />
-                      <span>Salvar Tablatura</span>
+                      <span>Salvar Partitura</span>
                     </Button>
 
                     <Button type="button" variant="outline">
@@ -340,11 +346,10 @@ export function TabsForm(): ReactNode {
             <Card>
               <CardHeader>
                 <CardTitle>Upload de Arquivo</CardTitle>
-                <CardDescription>Formatos aceitos e informações do arquivo</CardDescription>
+                <CardDescription>Partituras em PDF ou formatos musicais</CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Drag and Drop Area */}
                 <div
                   className={`
                     border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
@@ -365,9 +370,9 @@ export function TabsForm(): ReactNode {
                 >
                   <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
 
-                  <h3 className="text-lg font-medium mb-2">Clique ou arraste seu arquivo aqui</h3>
+                  <h3 className="text-lg font-medium mb-2">Clique ou arraste sua partitura aqui</h3>
 
-                  <p className="text-sm text-muted-foreground mb-4">Máximo 10MB por arquivo</p>
+                  <p className="text-sm text-muted-foreground mb-4">Máximo 50MB por arquivo</p>
 
                   <Button variant="outline" size="sm">
                     Escolher Arquivo
@@ -377,7 +382,7 @@ export function TabsForm(): ReactNode {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".gp5,.gpx,.tef,.ptb"
+                  accept=".pdf,.xml,.mxl,.mid,.midi"
                   onChange={(e) => handleFileSelect(e.target.files)}
                   className="hidden"
                 />
@@ -413,7 +418,7 @@ export function TabsForm(): ReactNode {
                 <div className="border rounded-lg p-4">
                   <h4 className="font-medium mb-3">Formatos Suportados</h4>
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2">
                     {acceptedFormats.map((format) => (
                       <div key={format.ext} className="flex items-center space-x-2 text-sm">
                         <FileText className="w-4 h-4 text-muted-foreground" />
@@ -424,13 +429,16 @@ export function TabsForm(): ReactNode {
                   </div>
                 </div>
 
-                <div className="border rounded-lg p-4 bg-blue-50 dark:bg-blue-950/20">
-                  <h4 className="font-medium mb-2 text-blue-800 dark:text-blue-200">💡 Dicas</h4>
+                <div className="border rounded-lg p-4 bg-orange-50 dark:bg-orange-950/20">
+                  <h4 className="font-medium mb-2 text-orange-800 dark:text-orange-200">
+                    🎼 Dicas
+                  </h4>
 
-                  <ul className="text-sm space-y-1 text-blue-700 dark:text-blue-300">
-                    <li>• Arquivos .gpx oferecem melhor qualidade</li>
-                    <li>• Verifique se o arquivo abre corretamente no app original</li>
-                    <li>• Prefira versões mais recentes dos formatos</li>
+                  <ul className="text-sm space-y-1 text-orange-700 dark:text-orange-300">
+                    <li>• PDFs em alta resolução garantem melhor leitura</li>
+                    <li>• MusicXML permite edição posterior</li>
+                    <li>• Arquivos .mxl são mais compactos que .xml</li>
+                    <li>• MIDI oferece playback, mas sem notação visual</li>
                   </ul>
                 </div>
               </CardContent>

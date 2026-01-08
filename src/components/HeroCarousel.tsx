@@ -1,10 +1,10 @@
 import { type ReactNode, useEffect, useState } from 'react';
 
-import musician1 from '@/assets/musician-1.jpg';
-import musician2 from '@/assets/musician-2.jpg';
-import musician3 from '@/assets/musician-3.jpg';
-import musician4 from '@/assets/musician-4.jpg';
-import musician5 from '@/assets/musician-5.jpg';
+import musician1 from '~/assets/musician-1.jpg';
+import musician2 from '~/assets/musician-2.jpg';
+import musician3 from '~/assets/musician-3.jpg';
+import musician4 from '~/assets/musician-4.jpg';
+import musician5 from '~/assets/musician-5.jpg';
 
 const CAROUSEL_INTERVAL_IN_MS = 6000;
 
