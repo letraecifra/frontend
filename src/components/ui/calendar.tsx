@@ -10,6 +10,7 @@ export type CalendarProps = ComponentProps<typeof DayPicker>;
 export function Calendar({
   className,
   classNames,
+  modifiersClassNames,
   showOutsideDays = true,
   ...props
 }: CalendarProps): ReactNode {
@@ -41,6 +42,9 @@ export function Calendar({
           buttonVariants({ variant: 'ghost' }),
           'h-9 w-9 p-0 font-normal aria-selected:opacity-100',
         ),
+        ...classNames,
+      }}
+      modifiersClassNames={{
         today: 'bg-accent text-accent-foreground',
         disabled: 'text-muted-foreground opacity-50',
         hidden: 'invisible',
@@ -50,7 +54,7 @@ export function Calendar({
           'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
         range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
         range_end: 'day-range-end',
-        ...classNames,
+        ...modifiersClassNames,
       }}
       components={{
         Chevron({ orientation }) {
