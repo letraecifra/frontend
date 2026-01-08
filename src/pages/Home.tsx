@@ -6,7 +6,7 @@ import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { useLanguage } from '~/contexts/LanguageContext';
+import { useLanguage } from '~/contexts';
 import { Navigation } from '~/layouts';
 
 // FIXME: mock data for the prototype

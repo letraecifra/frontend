@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { useLanguage } from '~/contexts/LanguageContext';
+import { useLanguage } from '~/contexts';
 import { Navigation } from '~/layouts';
 
 export function NotFound(): ReactNode {

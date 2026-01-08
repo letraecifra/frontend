@@ -19,7 +19,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
-import { useAuth } from '~/contexts/AuthContext';
+import { useAuth } from '~/contexts';
 import { Navigation } from '~/layouts';
 
 const profileSchema = z.object({

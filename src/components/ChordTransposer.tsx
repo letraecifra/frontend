@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { useLanguage } from '~/contexts/LanguageContext';
+import { useLanguage } from '~/contexts';
 
 const NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const CHORD_REGEX = /\b[A-G][#b]?(?:maj|min|m|dim|aug|sus|add|\d)*\b/g;

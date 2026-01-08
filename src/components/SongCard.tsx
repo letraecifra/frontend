@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
-import { useLanguage } from '~/contexts/LanguageContext';
+import { useLanguage } from '~/contexts';
 
 interface SongCardProps {
   artist: string;

@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { Input } from '~/components/ui/input';
-import { useLanguage } from '~/contexts/LanguageContext';
+import { useLanguage } from '~/contexts';
 
 export function Navigation(): ReactNode {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
