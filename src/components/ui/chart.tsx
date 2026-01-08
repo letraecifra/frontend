@@ -9,7 +9,13 @@ import {
   useId,
   useMemo,
 } from 'react';
-import * as RechartsPrimitive from 'recharts';
+import {
+  type DefaultLegendContentProps,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  type TooltipContentProps,
+} from 'recharts';
 
 import { cn } from '~/utils';
 
@@ -46,7 +52,7 @@ function useChart(): ChartContextProps {
 export const ChartContainer = forwardRef<
   HTMLDivElement,
   {
-    children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
+    children: ComponentProps<typeof ResponsiveContainer>['children'];
     config: ChartConfig;
   } & ComponentProps<'div'>
 >(({ id, className, children, config, ...props }, ref) => {
@@ -65,7 +71,7 @@ export const ChartContainer = forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
+        <ResponsiveContainer>{children}</ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   );
@@ -100,7 +106,7 @@ ${colorConfig
   );
 }
 
-export const ChartTooltip = RechartsPrimitive.Tooltip;
+export const ChartTooltip = Tooltip;
 
 export const ChartTooltipContent = forwardRef<
   HTMLDivElement,
@@ -111,7 +117,7 @@ export const ChartTooltipContent = forwardRef<
     labelKey?: string;
     nameKey?: string;
   } & ComponentProps<'div'> &
-    ComponentProps<typeof RechartsPrimitive.Tooltip>
+    TooltipContentProps<number | string, number | string>
 >(
   (
     {
@@ -245,7 +251,7 @@ export const ChartTooltipContent = forwardRef<
   },
 );
 
-export const ChartLegend = RechartsPrimitive.Legend;
+export const ChartLegend = Legend;
 
 export const ChartLegendContent = forwardRef<
   HTMLDivElement,
@@ -253,7 +259,7 @@ export const ChartLegendContent = forwardRef<
     hideIcon?: boolean;
     nameKey?: string;
   } & ComponentProps<'div'> &
-    Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'>
+    Pick<DefaultLegendContentProps, 'payload' | 'verticalAlign'>
 >(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
   const { config } = useChart();
 
