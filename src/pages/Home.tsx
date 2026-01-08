@@ -1,7 +1,6 @@
 import { Clock, Filter, Music, PlayCircle, Search, Star, TrendingUp, Users } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { Navigation } from '~/components/layout/Navigation';
 import { HeroCarousel } from '~/components/music/HeroCarousel';
 import { SongCard } from '~/components/music/SongCard';
 import { Badge } from '~/components/ui/badge';
@@ -9,6 +8,7 @@ import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { Navigation } from '~/layouts';
 
 // FIXME: mock data for the prototype
 const mockSongs = [

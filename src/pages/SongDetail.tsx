@@ -15,13 +15,13 @@ import { type ReactNode, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { Navigation } from '~/components/layout/Navigation';
 import { ChordTransposer } from '~/components/music/ChordTransposer';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
 import { Textarea } from '~/components/ui/textarea';
+import { Navigation } from '~/layouts';
 
 // FIXME: mock song data - in real app would fetch from API
 const mockSongData = {

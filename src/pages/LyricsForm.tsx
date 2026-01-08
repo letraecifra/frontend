@@ -6,7 +6,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { Navigation } from '~/components/layout/Navigation';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import {
@@ -27,6 +26,7 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { Textarea } from '~/components/ui/textarea';
+import { Navigation } from '~/layouts';
 
 type LyricsFormData = z.infer<typeof lyricsSchema>;
 

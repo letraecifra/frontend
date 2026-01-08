@@ -2,9 +2,9 @@ import { ArrowLeft, FileText, Guitar, Music, Sheet } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
-import { Navigation } from '~/components/layout/Navigation';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import { Navigation } from '~/layouts';
 
 const artifactTypes = [
   {
