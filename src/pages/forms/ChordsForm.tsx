@@ -1,139 +1,145 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Navigation } from "@/components/layout/Navigation";
-import { Badge } from "@/components/ui/badge";
-import { 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowLeft, Eye, Music, Plus, Save, X } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import * as z from 'zod';
+
+import { Navigation } from '@/components/layout/Navigation';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
   Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { 
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { ArrowLeft, Save, Eye, Music, Plus, X } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-
-const chordsSchema = z.object({
-  songName: z.string().min(1, "Nome da música é obrigatório"),
-  artist: z.string().min(1, "Artista é obrigatório"),
-  compositionYear: z.string().optional(),
-  originalLanguage: z.string().min(1, "Idioma original é obrigatório"),
-  spotifyLink: z.string().url("Link do Spotify inválido").optional().or(z.literal("")),
-  youtubeLink: z.string().url("Link do YouTube inválido").optional().or(z.literal("")),
-  baseKey: z.string().min(1, "Tom base é obrigatório"),
-  lyrics: z.string().min(10, "Letra deve ter pelo menos 10 caracteres"),
-  chords: z.array(z.object({
-    position: z.number(),
-    chord: z.string(),
-    section: z.string().optional(),
-  })).optional(),
-});
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 type ChordsFormData = z.infer<typeof chordsSchema>;
 
-const validKeys = [
-  "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"
-];
-
-const languages = [
-  { value: "pt", label: "Português" },
-  { value: "en", label: "Inglês" },
-  { value: "es", label: "Espanhol" },
-  { value: "fr", label: "Francês" },
-  { value: "it", label: "Italiano" },
-  { value: "de", label: "Alemão" },
-];
-
 interface ChordPosition {
-  position: number;
   chord: string;
+  position: number;
   section?: string;
 }
 
-export const ChordsForm = () => {
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 50 }, (_, i) => (currentYear - i).toString());
+const validKeys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+const languages = [
+  { value: 'pt', label: 'Português' },
+  { value: 'en', label: 'Inglês' },
+  { value: 'es', label: 'Espanhol' },
+  { value: 'fr', label: 'Francês' },
+  { value: 'it', label: 'Italiano' },
+  { value: 'de', label: 'Alemão' },
+];
+
+const chordsSchema = z.object({
+  songName: z.string().min(1, 'Nome da música é obrigatório'),
+  artist: z.string().min(1, 'Artista é obrigatório'),
+  compositionYear: z.string().optional(),
+  originalLanguage: z.string().min(1, 'Idioma original é obrigatório'),
+  spotifyLink: z.string().url('Link do Spotify inválido').optional().or(z.literal('')),
+  youtubeLink: z.string().url('Link do YouTube inválido').optional().or(z.literal('')),
+  baseKey: z.string().min(1, 'Tom base é obrigatório'),
+  lyrics: z.string().min(10, 'Letra deve ter pelo menos 10 caracteres'),
+  chords: z
+    .array(
+      z.object({
+        position: z.number(),
+        chord: z.string(),
+        section: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
+export function ChordsForm(): ReactNode {
   const navigate = useNavigate();
   const [isPreview, setIsPreview] = useState(false);
   const [chordPositions, setChordPositions] = useState<ChordPosition[]>([]);
-  const [selectedText, setSelectedText] = useState("");
-  const [newChord, setNewChord] = useState("");
+  const [selectedText, setSelectedText] = useState('');
+  const [newChord, setNewChord] = useState('');
 
   const form = useForm<ChordsFormData>({
     resolver: zodResolver(chordsSchema),
     defaultValues: {
-      songName: "",
-      artist: "",
-      compositionYear: "",
-      originalLanguage: "pt",
-      spotifyLink: "",
-      youtubeLink: "",
-      baseKey: "C",
-      lyrics: "",
+      songName: '',
+      artist: '',
+      compositionYear: '',
+      originalLanguage: 'pt',
+      spotifyLink: '',
+      youtubeLink: '',
+      baseKey: 'C',
+      lyrics: '',
       chords: [],
     },
   });
 
-  const onSubmit = (data: ChordsFormData) => {
+  const watchedLyrics = form.watch('lyrics');
+  const watchedSongName = form.watch('songName');
+  const watchedArtist = form.watch('artist');
+  const watchedBaseKey = form.watch('baseKey');
+
+  function handleSubmit(data: ChordsFormData): void {
     const formData = {
       ...data,
       chords: chordPositions,
     };
-    console.log("Chords Form Data:", formData);
-    toast.success("Cifra salva com sucesso!");
-    navigate("/dashboard");
-  };
 
-  const watchedLyrics = form.watch("lyrics");
-  const watchedSongName = form.watch("songName");
-  const watchedArtist = form.watch("artist");
-  const watchedBaseKey = form.watch("baseKey");
+    // eslint-disable-next-line no-console -- DEBUG:
+    console.log('Chords Form Data:', formData);
+    toast.success('Cifra salva com sucesso!');
+    navigate('/dashboard');
+  }
 
-  const handleTextSelection = () => {
+  function handleTextSelection(): void {
     const selection = window.getSelection();
+
     if (selection && selection.toString().length > 0) {
       setSelectedText(selection.toString());
     }
-  };
+  }
 
-  const addChord = () => {
+  function handleAddChord(): void {
     if (newChord && selectedText) {
       const newChordPosition: ChordPosition = {
         position: chordPositions.length,
         chord: newChord,
         section: selectedText.substring(0, 20),
       };
+
       setChordPositions([...chordPositions, newChordPosition]);
-      setNewChord("");
-      setSelectedText("");
-      toast.success("Acorde adicionado!");
+      setNewChord('');
+      setSelectedText('');
+      toast.success('Acorde adicionado!');
     }
-  };
+  }
 
-  const removeChord = (index: number) => {
+  function handleRemoveChord(index: number): void {
     setChordPositions(chordPositions.filter((_, i) => i !== index));
-  };
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 50 }, (_, i) => (currentYear - i).toString());
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -144,12 +150,9 @@ export const ChordsForm = () => {
               </Link>
             </Button>
             <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsPreview(!isPreview)}
-              >
+              <Button variant="outline" onClick={() => setIsPreview(!isPreview)}>
                 <Eye className="w-4 h-4 mr-2" />
-                {isPreview ? "Editar" : "Visualizar"}
+                {isPreview ? 'Editar' : 'Visualizar'}
               </Button>
             </div>
           </div>
@@ -159,9 +162,7 @@ export const ChordsForm = () => {
             </div>
             <h1 className="text-3xl font-bold text-foreground">Nova Cifra</h1>
           </div>
-          <p className="text-muted-foreground">
-            Crie uma cifra com acordes vinculados à letra
-          </p>
+          <p className="text-muted-foreground">Crie uma cifra com acordes vinculados à letra</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -174,7 +175,7 @@ export const ChordsForm = () => {
               </CardHeader>
               <CardContent>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
@@ -319,8 +320,8 @@ export const ChordsForm = () => {
                         <FormItem>
                           <FormLabel>Letra da Música *</FormLabel>
                           <FormControl>
-                            <Textarea 
-                              {...field} 
+                            <Textarea
+                              {...field}
                               placeholder="Digite a letra aqui... Selecione partes da letra para adicionar acordes."
                               className="min-h-[200px] font-mono"
                               onMouseUp={handleTextSelection}
@@ -358,7 +359,7 @@ export const ChordsForm = () => {
                 {selectedText && (
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="text-sm text-muted-foreground mb-2">Texto selecionado:</p>
-                    <p className="font-mono text-sm">"{selectedText}"</p>
+                    <p className="font-mono text-sm">&quot;{selectedText}&quot;</p>
                   </div>
                 )}
 
@@ -369,11 +370,7 @@ export const ChordsForm = () => {
                     onChange={(e) => setNewChord(e.target.value)}
                     className="flex-1"
                   />
-                  <Button 
-                    onClick={addChord} 
-                    disabled={!selectedText || !newChord}
-                    size="sm"
-                  >
+                  <Button onClick={handleAddChord} disabled={!selectedText || !newChord} size="sm">
                     <Plus className="w-4 h-4 mr-2" />
                     Adicionar
                   </Button>
@@ -384,16 +381,18 @@ export const ChordsForm = () => {
                     <p className="text-sm font-medium">Acordes adicionados:</p>
                     <div className="flex flex-wrap gap-2">
                       {chordPositions.map((chord, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center space-x-2">
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="flex items-center space-x-2"
+                        >
                           <span>{chord.chord}</span>
-                          <span className="text-xs text-muted-foreground">
-                            ({chord.section})
-                          </span>
+                          <span className="text-xs text-muted-foreground">({chord.section})</span>
                           <Button
                             variant="ghost"
                             size="sm"
                             className="h-4 w-4 p-0 hover:bg-destructive hover:text-destructive-foreground"
-                            onClick={() => removeChord(index)}
+                            onClick={() => handleRemoveChord(index)}
                           >
                             <X className="w-3 h-3" />
                           </Button>
@@ -416,12 +415,8 @@ export const ChordsForm = () => {
               <div className="space-y-4">
                 {watchedSongName || watchedArtist ? (
                   <div>
-                    <h2 className="text-2xl font-bold">
-                      {watchedSongName || "Nome da Música"}
-                    </h2>
-                    <p className="text-lg text-muted-foreground">
-                      {watchedArtist || "Artista"}
-                    </p>
+                    <h2 className="text-2xl font-bold">{watchedSongName || 'Nome da Música'}</h2>
+                    <p className="text-lg text-muted-foreground">{watchedArtist || 'Artista'}</p>
                     <Badge variant="outline" className="mt-2">
                       Tom: {watchedBaseKey}
                     </Badge>
@@ -459,4 +454,4 @@ export const ChordsForm = () => {
       </div>
     </div>
   );
-};
+}

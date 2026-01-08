@@ -1,42 +1,30 @@
-import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Navigation } from "@/components/layout/Navigation";
-import { 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowLeft, Check, FileText, Save, Sheet, Upload, X } from 'lucide-react';
+import { type DragEvent, type ReactNode, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import * as z from 'zod';
+
+import { Navigation } from '@/components/layout/Navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from "@/components/ui/form";
-import { 
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { ArrowLeft, Save, Upload, FileText, Sheet, X, Check } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-
-const sheetMusicSchema = z.object({
-  songName: z.string().min(1, "Nome da música é obrigatório"),
-  artist: z.string().min(1, "Artista é obrigatório"),
-  compositionYear: z.string().optional(),
-  originalLanguage: z.string().min(1, "Idioma original é obrigatório"),
-  spotifyLink: z.string().url("Link do Spotify inválido").optional().or(z.literal("")),
-  youtubeLink: z.string().url("Link do YouTube inválido").optional().or(z.literal("")),
-  sheetFile: z.any().optional(),
-});
-
-type SheetMusicFormData = z.infer<typeof sheetMusicSchema>;
+  SelectValue,
+} from '@/components/ui/select';
 
 interface UploadedFile {
   file: File;
@@ -45,44 +33,60 @@ interface UploadedFile {
   type: string;
 }
 
+type SheetMusicFormData = z.infer<typeof sheetMusicSchema>;
+
+const sheetMusicSchema = z.object({
+  songName: z.string().min(1, 'Nome da música é obrigatório'),
+  artist: z.string().min(1, 'Artista é obrigatório'),
+  compositionYear: z.string().optional(),
+  originalLanguage: z.string().min(1, 'Idioma original é obrigatório'),
+  spotifyLink: z.string().url('Link do Spotify inválido').optional().or(z.literal('')),
+  youtubeLink: z.string().url('Link do YouTube inválido').optional().or(z.literal('')),
+  sheetFile: z.any().optional(),
+});
+
+const CURRENT_YEAR = new Date().getFullYear();
+
+const years = Array.from({ length: 50 }, (_, i) => (CURRENT_YEAR - i).toString());
+
 const languages = [
-  { value: "pt", label: "Português" },
-  { value: "en", label: "Inglês" },
-  { value: "es", label: "Espanhol" },
-  { value: "fr", label: "Francês" },
-  { value: "it", label: "Italiano" },
-  { value: "de", label: "Alemão" },
+  { value: 'pt', label: 'Português' },
+  { value: 'en', label: 'Inglês' },
+  { value: 'es', label: 'Espanhol' },
+  { value: 'fr', label: 'Francês' },
+  { value: 'it', label: 'Italiano' },
+  { value: 'de', label: 'Alemão' },
 ];
 
 const acceptedFormats = [
-  { ext: ".pdf", desc: "Documento PDF" },
-  { ext: ".xml", desc: "MusicXML" },
-  { ext: ".mxl", desc: "MusicXML Comprimido" },
-  { ext: ".mid", desc: "MIDI" },
-  { ext: ".midi", desc: "MIDI" },
+  { ext: '.pdf', desc: 'Documento PDF' },
+  { ext: '.xml', desc: 'MusicXML' },
+  { ext: '.mxl', desc: 'MusicXML Comprimido' },
+  { ext: '.mid', desc: 'MIDI' },
+  { ext: '.midi', desc: 'MIDI' },
 ];
 
-export const SheetMusicForm = () => {
+export function SheetMusicForm(): ReactNode {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<null | UploadedFile>(null);
   const [dragActive, setDragActive] = useState(false);
 
   const form = useForm<SheetMusicFormData>({
     resolver: zodResolver(sheetMusicSchema),
     defaultValues: {
-      songName: "",
-      artist: "",
-      compositionYear: "",
-      originalLanguage: "pt",
-      spotifyLink: "",
-      youtubeLink: "",
+      songName: '',
+      artist: '',
+      compositionYear: '',
+      originalLanguage: 'pt',
+      spotifyLink: '',
+      youtubeLink: '',
     },
   });
 
-  const onSubmit = (data: SheetMusicFormData) => {
+  function handleSubmit(data: SheetMusicFormData): void {
     if (!uploadedFile) {
-      toast.error("Por favor, faça upload de um arquivo de partitura");
+      toast.error('Por favor, faça upload de um arquivo de partitura');
       return;
     }
 
@@ -90,74 +94,72 @@ export const SheetMusicForm = () => {
       ...data,
       sheetFile: uploadedFile,
     };
-    console.log("Sheet Music Form Data:", formData);
-    toast.success("Partitura salva com sucesso!");
-    navigate("/dashboard");
-  };
 
-  const handleFileSelect = (files: FileList | null) => {
+    // eslint-disable-next-line no-console -- DEBUG:
+    console.log('Sheet Music Form Data:', formData);
+    toast.success('Partitura salva com sucesso!');
+    navigate('/dashboard');
+  }
+
+  function handleFileSelect(files: FileList | null): void {
     if (!files || files.length === 0) return;
 
     const file = files[0];
     const maxSize = 50 * 1024 * 1024; // 50MB for sheet music
 
-    // Check file size
     if (file.size > maxSize) {
-      toast.error("Arquivo muito grande. Máximo 50MB.");
+      toast.error('Arquivo muito grande. Máximo 50MB.');
       return;
     }
 
-    // Check file extension
     const validExtensions = ['.pdf', '.xml', '.mxl', '.mid', '.midi'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-    
+
     if (!validExtensions.includes(fileExtension)) {
-      toast.error("Formato não suportado. Use: .pdf, .xml, .mxl, .mid, .midi");
+      toast.error('Formato não suportado. Use: .pdf, .xml, .mxl, .mid, .midi');
       return;
     }
 
     const uploadedFileInfo: UploadedFile = {
       file,
       name: file.name,
-      size: (file.size / 1024 / 1024).toFixed(2) + " MB",
+      size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
       type: fileExtension.toUpperCase(),
     };
 
     setUploadedFile(uploadedFileInfo);
-    toast.success("Arquivo carregado com sucesso!");
-  };
+    toast.success('Arquivo carregado com sucesso!');
+  }
 
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+  function handleDrag(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.type === 'dragenter' || event.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (event.type === 'dragleave') {
       setDragActive(false);
     }
-  };
+  }
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  function handleDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
     setDragActive(false);
-    handleFileSelect(e.dataTransfer.files);
-  };
+    handleFileSelect(event.dataTransfer.files);
+  }
 
-  const removeFile = () => {
+  function removeFile(): void {
     setUploadedFile(null);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  };
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 50 }, (_, i) => (currentYear - i).toString());
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -168,27 +170,30 @@ export const SheetMusicForm = () => {
               </Link>
             </Button>
           </div>
+
           <div className="flex items-center space-x-3 mb-2">
             <div className="p-2 rounded-lg bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
               <Sheet className="w-5 h-5" />
             </div>
+
             <h1 className="text-3xl font-bold text-foreground">Nova Partitura</h1>
           </div>
+
           <p className="text-muted-foreground">
             Faça upload de arquivos de partitura (PDF, MusicXML, MIDI)
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Form */}
           <Card>
             <CardHeader>
               <CardTitle>Informações da Música</CardTitle>
               <CardDescription>Dados básicos da partitura</CardDescription>
             </CardHeader>
+
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -196,9 +201,11 @@ export const SheetMusicForm = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nome da Música *</FormLabel>
+
                           <FormControl>
                             <Input {...field} placeholder="Ex: Bohemian Rhapsody" />
                           </FormControl>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -210,9 +217,11 @@ export const SheetMusicForm = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Artista *</FormLabel>
+
                           <FormControl>
                             <Input {...field} placeholder="Ex: Queen" />
                           </FormControl>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -226,12 +235,14 @@ export const SheetMusicForm = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Ano de Composição</FormLabel>
+
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione o ano" />
                               </SelectTrigger>
                             </FormControl>
+
                             <SelectContent>
                               {years.map((year) => (
                                 <SelectItem key={year} value={year}>
@@ -240,6 +251,7 @@ export const SheetMusicForm = () => {
                               ))}
                             </SelectContent>
                           </Select>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -251,12 +263,14 @@ export const SheetMusicForm = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Idioma Original *</FormLabel>
+
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                             </FormControl>
+
                             <SelectContent>
                               {languages.map((lang) => (
                                 <SelectItem key={lang.value} value={lang.value}>
@@ -265,6 +279,7 @@ export const SheetMusicForm = () => {
                               ))}
                             </SelectContent>
                           </Select>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -278,9 +293,11 @@ export const SheetMusicForm = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Link do Spotify</FormLabel>
+
                           <FormControl>
                             <Input {...field} placeholder="https://open.spotify.com/..." />
                           </FormControl>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -292,9 +309,11 @@ export const SheetMusicForm = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Link do YouTube</FormLabel>
+
                           <FormControl>
                             <Input {...field} placeholder="https://youtube.com/..." />
                           </FormControl>
+
                           <FormMessage />
                         </FormItem>
                       )}
@@ -306,6 +325,7 @@ export const SheetMusicForm = () => {
                       <Save className="w-4 h-4" />
                       <span>Salvar Partitura</span>
                     </Button>
+
                     <Button type="button" variant="outline">
                       Salvar como Rascunho
                     </Button>
@@ -315,21 +335,21 @@ export const SheetMusicForm = () => {
             </CardContent>
           </Card>
 
-          {/* File Upload */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Upload de Arquivo</CardTitle>
                 <CardDescription>Partituras em PDF ou formatos musicais</CardDescription>
               </CardHeader>
+
               <CardContent className="space-y-4">
-                {/* Drag and Drop Area */}
                 <div
                   className={`
                     border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
-                    ${dragActive 
-                      ? 'border-primary bg-primary/5' 
-                      : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+                    ${
+                      dragActive
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted-foreground/25 hover:border-muted-foreground/50'
                     }
                   `}
                   onDragEnter={handleDrag}
@@ -339,12 +359,11 @@ export const SheetMusicForm = () => {
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-medium mb-2">
-                    Clique ou arraste sua partitura aqui
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Máximo 50MB por arquivo
-                  </p>
+
+                  <h3 className="text-lg font-medium mb-2">Clique ou arraste sua partitura aqui</h3>
+
+                  <p className="text-sm text-muted-foreground mb-4">Máximo 50MB por arquivo</p>
+
                   <Button variant="outline" size="sm">
                     Escolher Arquivo
                   </Button>
@@ -358,7 +377,6 @@ export const SheetMusicForm = () => {
                   className="hidden"
                 />
 
-                {/* Uploaded File Info */}
                 {uploadedFile && (
                   <div className="border rounded-lg p-4 bg-muted/50">
                     <div className="flex items-center justify-between">
@@ -366,6 +384,7 @@ export const SheetMusicForm = () => {
                         <div className="p-2 rounded-lg bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                           <Check className="w-4 h-4" />
                         </div>
+
                         <div>
                           <p className="font-medium">{uploadedFile.name}</p>
                           <p className="text-sm text-muted-foreground">
@@ -373,6 +392,7 @@ export const SheetMusicForm = () => {
                           </p>
                         </div>
                       </div>
+
                       <Button
                         variant="ghost"
                         size="sm"
@@ -385,9 +405,9 @@ export const SheetMusicForm = () => {
                   </div>
                 )}
 
-                {/* Supported Formats */}
                 <div className="border rounded-lg p-4">
                   <h4 className="font-medium mb-3">Formatos Suportados</h4>
+
                   <div className="grid grid-cols-1 gap-2">
                     {acceptedFormats.map((format) => (
                       <div key={format.ext} className="flex items-center space-x-2 text-sm">
@@ -399,9 +419,11 @@ export const SheetMusicForm = () => {
                   </div>
                 </div>
 
-                {/* Tips */}
                 <div className="border rounded-lg p-4 bg-orange-50 dark:bg-orange-950/20">
-                  <h4 className="font-medium mb-2 text-orange-800 dark:text-orange-200">🎼 Dicas</h4>
+                  <h4 className="font-medium mb-2 text-orange-800 dark:text-orange-200">
+                    🎼 Dicas
+                  </h4>
+
                   <ul className="text-sm space-y-1 text-orange-700 dark:text-orange-300">
                     <li>• PDFs em alta resolução garantem melhor leitura</li>
                     <li>• MusicXML permite edição posterior</li>
@@ -416,4 +438,4 @@ export const SheetMusicForm = () => {
       </div>
     </div>
   );
-};
+}

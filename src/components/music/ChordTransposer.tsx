@@ -1,34 +1,47 @@
-import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
+import { ArrowDown, ArrowUp, Music, RotateCcw } from 'lucide-react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Music, ArrowUp, ArrowDown, RotateCcw } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+} from '@/components/ui/select';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-// Musical notes in chromatic order
-const NOTES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+const NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const CHORD_REGEX = /\b[A-G][#b]?(?:maj|min|m|dim|aug|sus|add|\d)*\b/g;
 
 interface ChordTransposerProps {
-  originalKey: string;
   content: string;
   onContentChange: (newContent: string, newKey: string) => void;
+  originalKey: string;
 }
 
-export const ChordTransposer = ({ 
-  originalKey, 
-  content, 
-  onContentChange
-}: ChordTransposerProps) => {
+export function ChordTransposer({
+  originalKey,
+  content,
+  onContentChange,
+}: ChordTransposerProps): ReactNode {
   const { t } = useLanguage();
   const [currentKey, setCurrentKey] = useState(originalKey);
+
+  const semitoneDistance = useMemo(() => {
+    const originalIndex = NOTES.indexOf(originalKey);
+    const currentIndex = NOTES.indexOf(currentKey);
+
+    if (originalIndex === -1 || currentIndex === -1) return 0;
+
+    let distance = currentIndex - originalIndex;
+    if (distance > 6) distance -= 12;
+    if (distance < -6) distance += 12;
+
+    return distance;
+  }, [currentKey, originalKey]);
 
   const transposeChord = useCallback((chord: string, semitones: number): string => {
     const chordMatch = chord.match(/^([A-G][#b]?)(.*)/);
@@ -44,78 +57,74 @@ export const ChordTransposer = ({
     return NOTES[newIndex] + suffix;
   }, []);
 
-  const transposeContent = useCallback((targetKey: string) => {
-    const originalIndex = NOTES.indexOf(originalKey);
-    const targetIndex = NOTES.indexOf(targetKey);
-    
-    if (originalIndex === -1 || targetIndex === -1) return;
+  const transposeContent = useCallback(
+    (targetKey: string) => {
+      const originalIndex = NOTES.indexOf(originalKey);
+      const targetIndex = NOTES.indexOf(targetKey);
 
-    const semitones = targetIndex - originalIndex;
-    
-    const transposedContent = content.replace(CHORD_REGEX, (chord) => 
-      transposeChord(chord, semitones)
-    );
+      if (originalIndex === -1 || targetIndex === -1) return;
 
-    setCurrentKey(targetKey);
-    onContentChange(transposedContent, targetKey);
-  }, [originalKey, content, transposeChord, onContentChange]);
+      const semitones = targetIndex - originalIndex;
 
-  const transposeBySteps = (steps: number) => {
-    const currentIndex = NOTES.indexOf(currentKey);
-    if (currentIndex === -1) return;
+      const transposedContent = content.replace(CHORD_REGEX, (chord) =>
+        transposeChord(chord, semitones),
+      );
 
-    let newIndex = (currentIndex + steps) % 12;
-    if (newIndex < 0) newIndex += 12;
+      setCurrentKey(targetKey);
+      onContentChange(transposedContent, targetKey);
+    },
+    [originalKey, content, transposeChord, onContentChange],
+  );
 
-    transposeContent(NOTES[newIndex]);
-  };
+  const transposeBySteps = useCallback(
+    (steps: number) => {
+      const currentIndex = NOTES.indexOf(currentKey);
+      if (currentIndex === -1) return;
 
-  const resetToOriginal = () => {
+      let newIndex = (currentIndex + steps) % 12;
+      if (newIndex < 0) newIndex += 12;
+
+      transposeContent(NOTES[newIndex]);
+    },
+    [currentKey, transposeContent],
+  );
+
+  const resetToOriginal = useCallback(() => {
     transposeContent(originalKey);
-  };
-
-  const getSemitoneDistance = () => {
-    const originalIndex = NOTES.indexOf(originalKey);
-    const currentIndex = NOTES.indexOf(currentKey);
-    
-    if (originalIndex === -1 || currentIndex === -1) return 0;
-    
-    let distance = currentIndex - originalIndex;
-    if (distance > 6) distance -= 12;
-    if (distance < -6) distance += 12;
-    
-    return distance;
-  };
-
-  const semitoneDistance = getSemitoneDistance();
+  }, [originalKey, transposeContent]);
 
   return (
     <Card className="bg-gradient-secondary shadow-musical border-l-4 border-l-primary">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center space-x-2 text-lg">
           <Music className="w-5 h-5 text-primary" />
-          <span>{t("transpose.title")}</span>
+
+          <span>{t('transpose.title')}</span>
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
-        {/* Current Key Display */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="text-sm font-medium text-muted-foreground">
-              {t("transpose.currentKey")}
+              {t('transpose.currentKey')}
             </span>
-            <Badge variant="outline" className="text-lg font-bold px-3 py-1 border-primary text-primary">
+
+            <Badge
+              variant="outline"
+              className="text-lg font-bold px-3 py-1 border-primary text-primary"
+            >
               {currentKey}
             </Badge>
           </div>
-          
+
           {semitoneDistance !== 0 && (
             <div className="flex items-center space-x-2">
               <Badge variant="secondary" className="text-xs">
-                {semitoneDistance > 0 ? `+${semitoneDistance}` : semitoneDistance} 
-                {t("transpose.semitones")}
+                {semitoneDistance > 0 ? `+${semitoneDistance}` : semitoneDistance}
+                {t('transpose.semitones')}
               </Badge>
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -123,7 +132,7 @@ export const ChordTransposer = ({
                 className="text-xs hover:text-primary"
               >
                 <RotateCcw className="w-3 h-3 mr-1" />
-                {t("transpose.reset")}
+                {t('transpose.reset')}
               </Button>
             </div>
           )}
@@ -140,13 +149,11 @@ export const ChordTransposer = ({
             <ArrowDown className="w-4 h-4 mr-1" />
             -1
           </Button>
-          
+
           <div className="px-4 py-2 bg-muted/50 rounded-md border-2 border-dashed border-muted-foreground/30">
-            <span className="text-sm font-medium">
-              {t("transpose.quickTranspose")}
-            </span>
+            <span className="text-sm font-medium">{t('transpose.quickTranspose')}</span>
           </div>
-          
+
           <Button
             variant="outline"
             size="sm"
@@ -161,12 +168,13 @@ export const ChordTransposer = ({
         {/* Key Selector */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">
-            {t("transpose.selectTargetKey")}
+            {t('transpose.selectTargetKey')}
           </label>
           <Select value={currentKey} onValueChange={transposeContent}>
             <SelectTrigger className="bg-card border-muted-foreground/20 hover:border-primary transition-colors ease-musical">
               <SelectValue />
             </SelectTrigger>
+
             <SelectContent>
               {NOTES.map((note) => (
                 <SelectItem key={note} value={note} className="hover:bg-primary/10">
@@ -174,7 +182,7 @@ export const ChordTransposer = ({
                     <span className="font-medium">{note}</span>
                     {note === originalKey && (
                       <Badge variant="secondary" className="ml-2 text-xs">
-                        {t("transpose.original")}
+                        {t('transpose.original')}
                       </Badge>
                     )}
                   </div>
@@ -184,17 +192,14 @@ export const ChordTransposer = ({
           </Select>
         </div>
 
-        {/* Info */}
         <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-md">
           <p>
-            {t("transpose.originalKey")}
+            {t('transpose.originalKey')}
             <span className="font-bold text-musical-key">{originalKey}</span>
           </p>
-          <p className="mt-1">
-            {t("transpose.autoTranspose")}
-          </p>
+          <p className="mt-1">{t('transpose.autoTranspose')}</p>
         </div>
       </CardContent>
     </Card>
   );
-};
+}

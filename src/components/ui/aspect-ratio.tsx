@@ -1,5 +1,4 @@
-import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio"
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair, react/jsx-filename-extension */
+import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
 
-const AspectRatio = AspectRatioPrimitive.Root
-
-export { AspectRatio }
+export const AspectRatio = AspectRatioPrimitive.Root;

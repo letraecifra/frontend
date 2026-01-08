@@ -1,7 +1,7 @@
-import { Home } from "./Home";
+import { type ReactNode } from 'react';
 
-const Index = () => {
+import { Home } from './Home';
+
+export function Index(): ReactNode {
   return <Home />;
-};
-
-export default Index;
+}
