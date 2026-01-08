@@ -1,0 +1,78 @@
+name: Sync Main to Lovable
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-to-lovable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - id: rebase
+        continue-on-error: true
+        run: |
+          git checkout lovable
+          git rebase main
+          git push --force-with-lease origin lovable
+
+      - id: merge
+        if: steps.rebase.outcome == 'failure'
+        continue-on-error: true
+        run: |
+          git rebase --abort 2>/dev/null || true
+          git checkout lovable
+          git reset --hard origin/lovable
+          git merge main -m "chore: merge branch 'main' into lovable"
+          git push origin lovable
+
+      - id: pull-request
+        if: steps.rebase.outcome == 'failure' && steps.merge.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="sync-main-to-lovable-${TIMESTAMP}"
+
+          git merge --abort 2>/dev/null || true
+          git rebase --abort 2>/dev/null || true
+
+          git checkout main
+          git checkout -b "$BRANCH_NAME"
+          git push origin "$BRANCH_NAME"
+
+          gh pr create \
+            --base lovable \
+            --head "$BRANCH_NAME" \
+            --title "🔄 Sync — Merge branch \`main\` into \`lovable\`" \
+            --body "## ⚠️ Automatic Sync Failed
+
+          This PR was automatically created because the sync from \`main\` to \`lovable\` failed.
+
+          ### What happened?
+          1. ❌ Unable to rebase \`main\` onto \`lovable\`
+          2. ❌ Unable to merge \`main\` into \`lovable\`
+
+          ### Action required
+          Please resolve the conflicts manually and merge this PR to keep the \`lovable\` branch in sync with \`main\`."
+
+      - run: |
+          if [ "${{ steps.rebase.outcome }}" == "success" ]; then
+            echo "✅ Successfully rebased lovable onto main"
+          elif [ "${{ steps.merge.outcome }}" == "success" ]; then
+            echo "✅ Successfully merged main into lovable (rebase failed)"
+          else
+            echo "⚠️ Both rebase and merge failed. A PR has been created for manual resolution."
+          fi
