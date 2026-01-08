@@ -230,7 +230,7 @@ export function ArtistList(): ReactNode {
                 <Card className="bg-gradient-card shadow-card hover:shadow-elevated transition-all duration-300 ease-musical group cursor-pointer">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0 shadow-musical group-hover:scale-110 transition-transform ease-musical">
+                      <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center shrink-0 shadow-musical group-hover:scale-110 transition-transform ease-musical">
                         <Users className="w-8 h-8 text-primary-foreground" />
                       </div>
 

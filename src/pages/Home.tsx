@@ -140,12 +140,12 @@ export function Home(): ReactNode {
               <HeroCarousel className="max-w-sm mx-auto" />
             </div>
 
-            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-transparent via-primary/10 to-transparent pointer-events-none z-20"></div>
+            <div className="absolute inset-x-0 top-0 h-32 bg-linear-to-b from-transparent via-primary/10 to-transparent pointer-events-none z-20"></div>
 
             <div className="text-center max-w-4xl mx-auto pb-16">
               <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6">
                 <span className="block">{t('home.heroTitle1')}</span>
-                <span className="block bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
+                <span className="block bg-linear-to-r from-white to-green-200 bg-clip-text text-transparent">
                   {t('home.heroTitle2')}
                 </span>
               </h1>
@@ -161,7 +161,7 @@ export function Home(): ReactNode {
                   <Input
                     type="search"
                     placeholder={t('home.searchPlaceholder')}
-                    className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-sm border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
+                    className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-xs border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -200,7 +200,7 @@ export function Home(): ReactNode {
               <div className="text-left max-w-2xl">
                 <h1 className="text-4xl xl:text-6xl font-bold text-primary-foreground mb-6">
                   <span className="block">{t('home.heroTitle1')}</span>
-                  <span className="block bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
+                  <span className="block bg-linear-to-r from-white to-green-200 bg-clip-text text-transparent">
                     {t('home.heroTitle2')}
                   </span>
                 </h1>
@@ -216,7 +216,7 @@ export function Home(): ReactNode {
                     <Input
                       type="search"
                       placeholder={t('home.searchPlaceholder')}
-                      className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-sm border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
+                      className="pl-12 pr-4 py-4 text-lg bg-card/95 backdrop-blur-xs border-2 border-white/20 focus:border-white/40 rounded-xl shadow-elevated"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -247,11 +247,11 @@ export function Home(): ReactNode {
               </div>
 
               <div className="relative">
-                <div className="absolute -left-12 inset-y-0 w-24 bg-gradient-to-r from-primary via-primary/80 to-transparent pointer-events-none z-10"></div>
+                <div className="absolute -left-12 inset-y-0 w-24 bg-linear-to-r from-primary via-primary/80 to-transparent pointer-events-none z-10"></div>
 
                 <HeroCarousel className="relative z-20" />
 
-                <div className="absolute -right-12 inset-y-0 w-24 bg-gradient-to-l from-primary via-primary/60 to-transparent pointer-events-none z-10"></div>
+                <div className="absolute -right-12 inset-y-0 w-24 bg-linear-to-l from-primary via-primary/60 to-transparent pointer-events-none z-10"></div>
               </div>
             </div>
           </div>

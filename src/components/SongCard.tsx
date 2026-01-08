@@ -105,7 +105,7 @@ export function SongCard({
               <h3 className="font-semibold text-lg leading-tight mb-1 truncate">{title}</h3>
 
               <div className="flex items-center space-x-2 text-muted-foreground">
-                <User className="w-3 h-3 flex-shrink-0" />
+                <User className="w-3 h-3 shrink-0" />
 
                 <span className="text-sm truncate">{artist}</span>
 

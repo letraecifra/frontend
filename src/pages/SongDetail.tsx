@@ -186,7 +186,7 @@ export function SongDetail(): ReactNode {
 
                   <div className="flex items-center space-x-2">
                     <Button
-                      variant={isLiked ? 'default' : 'outline'}
+                      variant={isLiked ? 'default' : 'outline-solid'}
                       size="sm"
                       onClick={handleLike}
                       className={isLiked ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
@@ -286,7 +286,7 @@ export function SongDetail(): ReactNode {
                 <div className="space-y-4">
                   {comments.map((comment) => (
                     <div key={comment.id} className="flex space-x-3">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center shrink-0">
                         <User className="w-4 h-4 text-primary-foreground" />
                       </div>
 
@@ -385,7 +385,7 @@ export function SongDetail(): ReactNode {
                       to={`/song/${index + 10}`}
                       className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50 transition-colors ease-musical group"
                     >
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center shrink-0">
                         <Music className="w-4 h-4 text-primary-foreground" />
                       </div>
 

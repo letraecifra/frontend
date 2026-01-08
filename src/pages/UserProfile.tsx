@@ -116,7 +116,7 @@ export function UserProfile(): ReactNode {
                 </div>
 
                 <Button
-                  variant={isEditing ? 'outline' : 'default'}
+                  variant={isEditing ? 'outline-solid' : 'default'}
                   onClick={() => setIsEditing(!isEditing)}
                 >
                   {isEditing ? 'Cancelar' : 'Editar'}

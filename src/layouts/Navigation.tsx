@@ -69,7 +69,7 @@ export function Navigation(): ReactNode {
   }, []);
 
   return (
-    <nav className="border-b bg-gradient-card shadow-card sticky top-0 z-50 backdrop-blur-sm">
+    <nav className="border-b bg-gradient-card shadow-card sticky top-0 z-50 backdrop-blur-xs">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2 group">
@@ -186,7 +186,7 @@ export function Navigation(): ReactNode {
         </div>
 
         {isMenuOpen && (
-          <div className="lg:hidden border-t bg-card/95 backdrop-blur-sm">
+          <div className="lg:hidden border-t bg-card/95 backdrop-blur-xs">
             <div className="py-4 space-y-4">
               <div className="px-4 space-y-2">
                 {navigationItems.map((item) => {
