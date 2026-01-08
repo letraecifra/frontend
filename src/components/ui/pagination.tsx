@@ -42,7 +42,7 @@ export function PaginationLink({
       aria-current={isActive ? 'page' : undefined}
       className={cn(
         buttonVariants({
-          variant: isActive ? 'outline-solid' : 'ghost',
+          variant: isActive ? 'outline' : 'ghost',
           size,
         }),
         className,
