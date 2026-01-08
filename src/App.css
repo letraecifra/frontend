@@ -1,42 +1,152 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+/* Letra & Cifra Design System - Musical & Organic Theme
+All colors MUST be HSL for consistency.
+*/
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@layer base {
+  :root {
+    /* Base colors - warm, musical theme */
+    --background: 30 15% 98%;
+    --foreground: 30 10% 12%;
+
+    /* Card system - clean and readable */
+    --card: 0 0% 100%;
+    --card-foreground: 30 8% 15%;
+
+    /* Popover components */
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 8% 15%;
+
+    /* Primary - Forest green from logo leaves */
+    --primary: 140 35% 25%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 140 35% 20%;
+
+    /* Secondary - Soft earth tones */
+    --secondary: 25 15% 92%;
+    --secondary-foreground: 30 8% 20%;
+
+    /* Muted tones for subtle elements */
+    --muted: 25 10% 95%;
+    --muted-foreground: 30 5% 45%;
+
+    /* Accent - Musical note emphasis */
+    --accent: 35 25% 88%;
+    --accent-foreground: 30 8% 20%;
+
+    /* Destructive states */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders and inputs */
+    --border: 25 12% 88%;
+    --input: 25 12% 88%;
+    --ring: 140 35% 25%;
+
+    /* Musical theme specific colors */
+    --musical-note: 0 0% 0%;
+    --chord-highlight: 45 100% 85%;
+    --key-signature: 140 40% 30%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(140 35% 25%), hsl(140 30% 35%));
+    --gradient-secondary: linear-gradient(180deg, hsl(25 15% 98%), hsl(25 10% 95%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(25 8% 98%));
+
+    /* Shadows for depth */
+    --shadow-card: 0 2px 8px hsl(30 10% 12% / 0.08);
+    --shadow-elevated: 0 8px 25px hsl(30 10% 12% / 0.15);
+    --shadow-musical: 0 4px 12px hsl(140 35% 25% / 0.2);
+
+    /* Animation easing */
+    --ease-musical: cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  to {
-    transform: rotate(360deg);
+
+  .dark {
+    /* Dark theme - Deep musical night theme */
+    --background: 30 8% 8%;
+    --foreground: 30 15% 95%;
+
+    --card: 30 8% 12%;
+    --card-foreground: 30 12% 90%;
+
+    --popover: 30 8% 12%;
+    --popover-foreground: 30 12% 90%;
+
+    /* Primary - Brighter green for dark mode */
+    --primary: 140 40% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 140 40% 30%;
+
+    --secondary: 30 6% 18%;
+    --secondary-foreground: 30 12% 85%;
+
+    --muted: 30 6% 15%;
+    --muted-foreground: 30 5% 55%;
+
+    --accent: 35 15% 20%;
+    --accent-foreground: 30 12% 85%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 6% 18%;
+    --input: 30 6% 18%;
+    --ring: 140 40% 35%;
+
+    /* Musical theme dark colors */
+    --musical-note: 0 0% 100%;
+    --chord-highlight: 45 80% 25%;
+    --key-signature: 140 45% 40%;
+
+    /* Dark gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(140 40% 35%), hsl(140 35% 45%));
+    --gradient-secondary: linear-gradient(180deg, hsl(30 8% 8%), hsl(30 6% 12%));
+    --gradient-card: linear-gradient(180deg, hsl(30 8% 12%), hsl(30 6% 10%));
+
+    /* Dark shadows */
+    --shadow-card: 0 2px 12px hsl(0 0% 0% / 0.3);
+    --shadow-elevated: 0 8px 30px hsl(0 0% 0% / 0.4);
+    --shadow-musical: 0 4px 16px hsl(140 40% 35% / 0.3);
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@layer base {
+  * {
+    @apply border-border;
   }
-}
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  body {
+    @apply bg-background text-foreground;
+  }
 }
