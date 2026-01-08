@@ -1,8 +1,7 @@
 import { Clock, Filter, Music, PlayCircle, Search, Star, TrendingUp, Users } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { HeroCarousel } from '~/components/music/HeroCarousel';
-import { SongCard } from '~/components/music/SongCard';
+import { HeroCarousel, SongCard } from '~/components';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
