@@ -2,10 +2,10 @@ import { ArrowLeft, Home, Music } from 'lucide-react';
 import { type ReactNode, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { Navigation } from '@/components/layout/Navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Navigation } from '~/components/layout/Navigation';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 export function NotFound(): ReactNode {
   const location = useLocation();

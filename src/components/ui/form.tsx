@@ -20,8 +20,8 @@ import {
   useFormContext,
 } from 'react-hook-form';
 
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { Label } from '~/components/ui/label';
+import { cn } from '~/lib/utils';
 
 interface FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,

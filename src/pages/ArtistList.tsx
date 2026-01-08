@@ -2,11 +2,11 @@ import { Filter, Grid3X3, List, Music, Search, TrendingUp, Users } from 'lucide-
 import { type ReactNode, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Navigation } from '@/components/layout/Navigation';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Navigation } from '~/components/layout/Navigation';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
 
 // FIXME: mock data for the prototype
 const mockArtists = [

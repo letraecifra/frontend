@@ -1,17 +1,17 @@
 import { ArrowDown, ArrowUp, Music, RotateCcw } from 'lucide-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useLanguage } from '@/contexts/LanguageContext';
+} from '~/components/ui/select';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 const NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const CHORD_REGEX = /\b[A-G][#b]?(?:maj|min|m|dim|aug|sus|add|\d)*\b/g;

@@ -16,24 +16,24 @@ import {
 import { type ComponentType, type ReactNode, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Navigation } from '@/components/layout/Navigation';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Navigation } from '~/components/layout/Navigation';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+} from '~/components/ui/dropdown-menu';
+import { Input } from '~/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '~/components/ui/select';
 
 // FIXME: mock data for user artifacts
 const mockArtifacts = [
