@@ -1,6 +1,6 @@
 import { Chrome, Eye, EyeOff, Lock, Mail, Music, User, UserPlus } from 'lucide-react';
 import { type FormEvent, type ReactNode, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { toast } from 'sonner';
 
 import { Button } from '~/components/ui/button';

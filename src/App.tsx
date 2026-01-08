@@ -1,5 +1,5 @@
 import { type ReactNode, StrictMode } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router';
 
 import '~/App.css';
 import { Toaster } from '~/components/ui/sonner';
