@@ -1,6 +1,6 @@
 import { ArrowLeft, Home, Music } from 'lucide-react';
 import { type ReactNode, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';

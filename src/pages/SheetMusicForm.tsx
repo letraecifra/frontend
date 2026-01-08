@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Check, FileText, Save, Sheet, Upload, X } from 'lucide-react';
 import { type DragEvent, type KeyboardEvent, type ReactNode, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
