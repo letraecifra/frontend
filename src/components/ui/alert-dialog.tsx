@@ -8,7 +8,7 @@ import {
 } from 'react';
 
 import { buttonVariants } from '~/components/ui/button';
-import { cn } from '~/lib/utils';
+import { cn } from '~/utils';
 
 export const AlertDialog = AlertDialogPrimitive.Root;
 

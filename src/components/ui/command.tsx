@@ -10,7 +10,7 @@ import {
 } from 'react';
 
 import { Dialog, DialogContent } from '~/components/ui/dialog';
-import { cn } from '~/lib/utils';
+import { cn } from '~/utils';
 
 export type CommandDialogProps = DialogProps;
 

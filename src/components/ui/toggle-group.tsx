@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 import { toggleVariants } from '~/components/ui/toggle';
-import { cn } from '~/lib/utils';
+import { cn } from '~/utils';
 
 const ToggleGroupContext = createContext<VariantProps<typeof toggleVariants>>({
   size: 'default',
