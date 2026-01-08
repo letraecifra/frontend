@@ -186,7 +186,7 @@ export function SongDetail(): ReactNode {
 
                   <div className="flex items-center space-x-2">
                     <Button
-                      variant={isLiked ? 'default' : 'outline-solid'}
+                      variant={isLiked ? 'default' : 'outline'}
                       size="sm"
                       onClick={handleLike}
                       className={isLiked ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
