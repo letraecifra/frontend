@@ -1,7 +1,6 @@
 import { type ReactNode, StrictMode } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import '~/App.css';
 import { Toaster } from '~/components/ui/sonner';
 import { LanguageProvider } from '~/contexts';
 import { ArtistList, Home, Login, NotFound, Register, SongDetail } from '~/pages';
