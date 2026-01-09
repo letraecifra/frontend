@@ -76,12 +76,14 @@
     "eslint-config-any": "^2.2.1",
     "lovable-tagger": "^1.1.13",
     "prettier": "^3.7.4",
+    "sass": "^1.97.2",
     "tailwindcss": "^4.1.18",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   },
   "trustedDependencies": [
-    "@swc/core"
+    "@swc/core",
+    "esbuild"
   ]
 }
