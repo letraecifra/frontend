@@ -1,0 +1,285 @@
+# Project Rules: Letra & Cifra (frontend)
+
+You are an expert in TypeScript, React 19, Vite, Tailwind CSS 4, shadcn/ui, and modern frontend development.
+
+## Domain Context
+
+Letra & Cifra is a **music lyrics and chords web application** inspired by sites like Letras.com.br, Cifras.com.br, Cifra Club, and 911tab. The application focuses on:
+
+- Displaying song lyrics, chord charts, tablatures, and sheet music
+- Browsing songs and artists with search, latest posts, and popularity rankings
+- User-generated content with authentication and social features
+
+### Core Concepts
+
+| Term | Description |
+|------|-------------|
+| **Artifact** | Any musical content: lyrics, chord chart, tablature, or sheet music |
+| **Chord Chart** | Lyrics with musical notes/chords positioned above text sections |
+| **Tablature** | Guitar/bass notation in TAB format (downloadable files) |
+| **Sheet Music** | Traditional musical notation (downloadable files) |
+| **Key/Base Key** | The musical key of a song (used for transposition) |
+| **Transposition** | Shifting all chords up or down by semitones |
+
+### Valid Musical Notes
+
+When working with chord/key functionality, use only the following valid notes:
+
+```
+C, C#/Db, D, D#/Eb, E, F, F#/Gb, G, G#/Ab, A, A#/Bb, B
+```
+
+Chord can also contain modifiers (m, 2, 4, 5, 6, 7, 7+, 9, 11, o, etc.) alongside the notes.
+
+## Business Rules & Definitions
+
+- **Responsiveness**: Application UI must be responsive—every view/page should be friendly to both small and large screens
+- **Accessibility**: Application UI must support keyboard navigation, screen readers, and follow accessibility principles (WCAG)
+- **Internationalization**: All user-facing texts must be parameterized by language with EN and pt-BR versions available
+
+## Coding Workflow
+
+- Use **Conventional Commits** standard for Git commit messages (e.g., `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`)
+- Analyze similar resources' code styling before creating or updating the codebase
+- Follow existing patterns and conventions in the project
+
+## Code Style and Structure
+
+- Write concise, technical TypeScript code with accurate examples
+- Use functional and declarative programming patterns; avoid classes
+- **Prefer function declarations over function expressions** for component and function definitions
+- Prefer iteration and modularization over code duplication
+- Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`)
+- Structure files: exported component, subcomponents, helpers, static content, types
+- Use lowercase with dashes for directories (e.g., `components/song-card`)
+
+## Naming Conventions
+
+- Use PascalCase for component files and exports (e.g., `SongCard.tsx`)
+- Use camelCase for utility files (e.g., `use-mobile.ts`, `class-name.ts`)
+- Favor named exports over default exports
+- Use barrel exports (`index.ts`) for cleaner imports
+- **Always register new components in `index.ts` files** (if one exists) to facilitate imports
+
+## TypeScript Usage
+
+- Use TypeScript for all code; prefer interfaces over types
+- Avoid enums; use const objects or literal unions instead
+- Use functional components with TypeScript interfaces for props
+- Always specify explicit return types for functions (e.g., `ReactNode`, `JSX.Element`)
+- Use `type` imports when importing only types: `import { type ReactNode } from 'react'`
+- Enable strict mode; avoid `any` type
+
+## Syntax and Formatting
+
+- Use function declarations for components and standalone functions
+- Use arrow functions only for callbacks and inline functions
+- Use declarative JSX with proper self-closing tags
+- Prefer template literals over string concatenation
+- Use optional chaining (`?.`) and nullish coalescing (`??`) appropriately
+- Avoid unnecessary curly braces in conditionals; use concise syntax
+
+```tsx
+// Good: function declaration for components
+export function SongCard({ title }: SongCardProps): ReactNode {
+  return <div>{title}</div>;
+}
+
+// Good: arrow function for callbacks
+const handleClick = () => { ... };
+```
+
+## UI and Styling
+
+- Use Tailwind CSS 4 for styling with utility classes
+- Global styles and Tailwind CSS configurations are defined in `src/main.scss`
+- Use `.scss` extension for any additional stylesheets
+- Use shadcn/ui components from `~/components/ui/` as the foundation
+- Use Radix UI primitives for accessible, unstyled components when needed
+- Use the `cn()` utility from `~/utils` for conditional class merging
+- Implement responsive design with Tailwind's mobile-first breakpoints (mobile-first is mandatory)
+- Use CSS variables for theming (defined in `main.scss`)
+- Use Lucide React for icons (`lucide-react`)
+- Ensure all interactive elements are keyboard-accessible
+- Clean, intuitive visual design with focus on musical content readability
+
+### Navigation Structure
+
+The main navigation bar should provide quick access to:
+- Home, Search, Latest posts, Most popular, Bookmarks
+- Theme toggle (icon button)
+- Language toggle (icon button)
+- Login/Profile
+
+### List Patterns
+
+- Use **cards** for visual browsing (songs, artists on home/discovery pages)
+- Use **tables** for data-dense listings (search results, user management)
+- Both patterns must be responsive and work on mobile
+
+### Chord Chart Display
+
+- Show the base key prominently at the top of chord charts
+- Provide a **key transposition control** to shift all chords
+- Chords should be visually distinct from lyrics (color, font weight)
+- Position chords above the lyrics text they apply to
+
+## shadcn/ui Conventions
+
+- Import shadcn components from `~/components/ui/`
+- Customize components by extending the base shadcn variants
+- Use `class-variance-authority` (cva) for component variants
+- Follow shadcn patterns for new components: forward refs, slot composition
+- Use Sonner for toast notifications (`~/components/ui/sonner`)
+
+## Forms and Validation
+
+- Use React Hook Form for form state management
+- Use Zod for schema validation with `@hookform/resolvers`
+- Define form schemas with Zod, then infer TypeScript types from them
+- Use controlled components with `register` or `Controller`
+
+```tsx
+const schema = z.object({ email: z.string().email() });
+type FormData = z.infer<typeof schema>;
+```
+
+### Artifact Form Fields
+
+All artifact types share these common fields:
+- Song name (required)
+- Artist (required)
+- Composition year
+- Original language
+- Spotify link
+- YouTube link
+
+**Lyrics**: Simple text input
+
+**Chord Charts**:
+- Text with musical notes linked to song sections
+- Base key selection (dropdown with valid notes only)
+- Interface to position notes above specific lyrics
+
+**Tablatures**: File upload (formats compatible with popular tab apps)
+
+**Sheet Music**: File upload (formats compatible with sheet music apps)
+
+## Routing
+
+- Use React Router 7 for navigation
+- Use declarative `<Route>` components for route definitions
+- Implement lazy loading for route components when needed
+- Use `useNavigate`, `useParams`, and `useSearchParams` hooks
+
+### Public vs Private Routes
+
+**Public (no login required):**
+- View artifacts (lyrics, chord charts, tablatures, sheet music)
+- Browse lists (songs, artists, latest, popular)
+- Search functionality
+- Authentication screens (login modal, registration)
+
+**Private (login required):**
+- Like/dislike artifacts
+- Post comments
+- Report errors or suggest improvements
+- Edit user profile
+- View recent activities
+- Create and manage artifacts
+
+## Authentication
+
+- Support social login providers: **Google**, **X/Twitter**
+- Use a **login modal** for quick authentication
+- Provide a dedicated registration screen for new users
+- Protect private routes with authentication guards
+
+## State Management
+
+- Use React Context for global state (see `~/contexts`)
+- Use `useState` and `useReducer` for local state
+- Prefer lifting state up over prop drilling
+- Use custom hooks to encapsulate stateful logic (e.g., `use-mobile.ts`, `use-toast.ts`)
+
+## Performance Optimization
+
+- Use `React.memo()` for expensive components that receive stable props
+- Use `useMemo` and `useCallback` sparingly and only when necessary
+- Implement code splitting with `React.lazy()` and `Suspense`
+- Optimize images: use appropriate formats, lazy loading, proper sizing
+
+## Project Structure
+
+```
+src/
+├── assets/        # Static assets (images, fonts)
+├── components/    # Reusable components
+│   ├── ui/        # shadcn/ui base components
+│   └── ...        # Feature-specific components
+├── contexts/      # React Context providers
+├── layouts/       # Layout components
+├── pages/         # Route page components
+├── utils/         # Utility functions and hooks
+├── App.tsx        # Root component with global configs, contexts, and routes
+├── main.tsx       # Entry point (keep minimal—only renders App)
+└── main.scss      # Global styles and Tailwind CSS configuration
+```
+
+### Entry Point Convention
+
+- Keep `src/main.tsx` minimal—it should only mount the `<App />` component
+- Place all global configurations, context providers, and routing in `src/App.tsx`
+
+## Import Aliases
+
+- Use `~/` alias for absolute imports from `src/` directory
+- Prefer absolute imports over relative imports for better maintainability
+
+```tsx
+// Good
+import { Button } from '~/components/ui/button';
+import { cn } from '~/utils';
+
+// Avoid
+import { Button } from '../../../components/ui/button';
+```
+
+## Package Manager
+
+- Use Bun as the package manager (`bun install`, `bun run dev`)
+- Use `bun run` for script execution
+
+## Internationalization (i18n)
+
+- All user-facing text must be internationalized
+- Support two languages: **English (EN)** as default and **Brazilian Portuguese (pt-BR)**
+- pt-BR should be auto-selected based on user's browser locale
+- Use the language context from `~/contexts` for language switching
+- Provide a toggle button in the navigation for manual language switching
+- Never hardcode user-facing strings directly in components
+- Musical content (lyrics, chords) may have an "original language" field but is not translated
+
+## Key Conventions
+
+1. Rely on Vite's built-in features for optimization
+2. Prioritize Web Vitals (LCP, CLS, FID)
+3. Use semantic HTML elements for accessibility
+4. Implement proper ARIA attributes when needed
+5. Write self-documenting code; minimize comments
+6. Keep components small and focused on a single responsibility
+7. Ensure all views are responsive (mobile-first)
+8. Ensure keyboard navigation works for all interactive elements
+
+## Error Handling
+
+- Use error boundaries for graceful error handling in UI
+- Handle async errors with try/catch in async functions
+- Provide user-friendly error messages via toast notifications
+- Log errors appropriately for debugging
+
+## Testing (when applicable)
+
+- Write unit tests for utility functions
+- Write integration tests for complex components
+- Use Testing Library patterns for component testing
